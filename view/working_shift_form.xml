@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<!-- The COPYRIGHT file at the top level of this repository contains the full
+     copyright notices and license terms. -->
+<data>
+    <xpath expr="/form/field[@name='employee']" position="after">
+        <newline/>
+        <label name="contract"/>
+        <field name="contract"/>
+    </xpath>
+    <xpath expr="/form/field[@name='interventions']" position="after">
+        <label name="customer_invoice_line"/>
+        <field name="customer_invoice_line"/>
+    </xpath>
+</data>

@@ -1,0 +1,49 @@
+<?xml version="1.0"?>
+<!-- The COPYRIGHT file at the top level of this repository contains the full
+     copyright notices and license terms. -->
+<tryton>
+    <data>
+        <!-- working_shift -->
+        <record model="ir.ui.view" id="working_shift_view_form">
+            <field name="model">working_shift</field>
+            <field name="type">form</field>
+            <field name="inherit" ref="working_shift.working_shift_view_form"/>
+            <field name="name">working_shift_form</field>
+        </record>
+
+        <record model="ir.ui.view" id="working_shift_view_list">
+            <field name="model">working_shift</field>
+            <field name="type">tree</field>
+            <field name="inherit" ref="working_shift.working_shift_view_list"/>
+            <field name="name">working_shift_list</field>
+        </record>
+
+        <!-- working_shift.intervention -->
+        <record model="ir.ui.view" id="intervention_view_form">
+            <field name="model">working_shift.intervention</field>
+            <field name="type">form</field>
+            <field name="inherit" ref="working_shift.intervention_view_form"/>
+            <field name="name">intervention_form</field>
+        </record>
+
+        <!-- working_shift.invoice_customers -->
+        <record model="ir.action.wizard" id="act_invoice_customers">
+            <field name="name">Invoice Customers</field>
+            <field name="wiz_name">working_shift.invoice_customers</field>
+        </record>
+
+        <record model="ir.ui.view" id="invoice_customers_dates_view_form">
+            <field name="model">working_shift.invoice_customers.dates</field>
+            <field name="type">form</field>
+            <field name="name">invoice_customers_dates_form</field>
+        </record>
+
+        <menuitem id="menu_invoice_customers" action="act_invoice_customers"
+            parent="working_shift.menu_working_shift" sequence="50"/>
+        <record model="ir.ui.menu-res.group"
+                id="menu_invoice_customers_group_account">
+            <field name="menu" ref="menu_invoice_customers"/>
+            <field name="group" ref="account.group_account"/>
+        </record>
+    </data>
+</tryton>

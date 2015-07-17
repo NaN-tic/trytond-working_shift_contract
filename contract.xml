@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- The COPYRIGHT file at the top level of this repository contains the full
+     copyright notices and license terms. -->
+<tryton>
+    <data>
+        <record model="res.group" id="group_working_shift_contract">
+            <field name="name">Working Shifts Contracts</field>
+        </record>
+        <record model="res.user-res.group" id="user_admin_group_working_shift_contract">
+            <field name="user" ref="res.user_admin"/>
+            <field name="group" ref="group_working_shift_contract"/>
+        </record>
+        <record model="res.user-res.group" id="user_trigger_group_working_shift_contract">
+            <field name="user" ref="res.user_trigger"/>
+            <field name="group" ref="group_working_shift_contract"/>
+        </record>
+
+        <!-- working_shift.contract -->
+        <record model="ir.ui.view" id="contract_view_form">
+            <field name="model">working_shift.contract</field>
+            <field name="type">form</field>
+            <field name="name">contract_form</field>
+        </record>
+
+        <record model="ir.ui.view" id="contract_view_list">
+            <field name="model">working_shift.contract</field>
+            <field name="type">tree</field>
+            <field name="name">contract_list</field>
+        </record>
+
+        <record model="ir.action.act_window" id="act_contract">
+            <field name="name">Contracts</field>
+            <field name="res_model">working_shift.contract</field>
+        </record>
+        <record model="ir.action.act_window.view" id="act_contract_view1">
+            <field name="sequence" eval="10"/>
+            <field name="view" ref="contract_view_list"/>
+            <field name="act_window" ref="act_contract"/>
+        </record>
+        <record model="ir.action.act_window.view" id="act_contract_view2">
+            <field name="sequence" eval="20"/>
+            <field name="view" ref="contract_view_form"/>
+            <field name="act_window" ref="act_contract"/>
+        </record>
+
+        <record model="ir.model.access" id="access_contract_working_shift">
+            <field name="model" search="[('model', '=', 'working_shift.contract')]"/>
+            <field name="group" ref="working_shift.group_working_shift"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_delete" eval="False"/>
+        </record>
+
+        <record model="ir.model.access" id="access_contract_contract">
+            <field name="model" search="[('model', '=', 'working_shift.contract')]"/>
+            <field name="group" ref="group_working_shift_contract"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_delete" eval="True"/>
+        </record>
+
+        <!-- working_shift.contract.working_shift_rule -->
+        <record model="ir.ui.view" id="contract_working_shift_rule_view_form">
+            <field name="model">working_shift.contract.working_shift_rule</field>
+            <field name="type">form</field>
+            <field name="name">contract_working_shift_rule_form</field>
+        </record>
+
+        <record model="ir.ui.view" id="contract_working_shift_rule_view_list">
+            <field name="model">working_shift.contract.working_shift_rule</field>
+            <field name="type">tree</field>
+            <field name="priority" eval="20"/>
+            <field name="name">contract_working_shift_rule_list</field>
+        </record>
+
+        <!-- working_shift.contract.intervention_rule -->
+        <record model="ir.ui.view" id="contract_intervention_rule_view_form">
+            <field name="model">working_shift.contract.intervention_rule</field>
+            <field name="type">form</field>
+            <field name="name">contract_intervention_rule_form</field>
+        </record>
+
+        <record model="ir.ui.view" id="contract_intervention_rule_view_list">
+            <field name="model">working_shift.contract.intervention_rule</field>
+            <field name="type">tree</field>
+            <field name="priority" eval="20"/>
+            <field name="name">contract_intervention_rule_list</field>
+        </record>
+
+        <!-- ir.model.field -->
+        <record model="ir.ui.view" id="model_fields_view_form">
+            <field name="model">ir.model.field</field>
+            <field name="type">form</field>
+            <field name="inherit" ref="ir.model_fields_view_form"/>
+            <field name="name">ir_model_field_form</field>
+        </record>
+
+        <record model="ir.ui.view" id="model_fields_view_tree">
+            <field name="model">ir.model.field</field>
+            <field name="type">tree</field>
+            <field name="inherit" ref="ir.model_fields_view_tree"/>
+            <field name="name">ir_model_field_list</field>
+        </record>
+
+        <!-- working_shift.contract.field -->
+        <record model="ir.ui.view" id="contract_field_view_form">
+            <field name="model">working_shift.contract.field</field>
+            <field name="type">form</field>
+            <field name="name">contract_field_form</field>
+        </record>
+
+        <record model="ir.ui.view" id="contract_field_view_list">
+            <field name="model">working_shift.contract.field</field>
+            <field name="type">tree</field>
+            <field name="name">contract_field_list</field>
+        </record>
+
+        <!-- Menus -->
+        <menuitem id="menu_contract" action="act_contract"
+            parent="working_shift.menu_working_shift" sequence="20"/>
+    </data>
+</tryton>

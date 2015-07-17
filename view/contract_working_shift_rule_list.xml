@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<!-- The COPYRIGHT file at the top level of this repository contains the full
+     copyright notices and license terms. -->
+<tree string="Contract Working Shift Rules" sequence="sequence">
+    <field name="contract"/>
+    <field name="hours"/>
+    <field name="product"/>
+    <field name="list_price"/>
+</tree>

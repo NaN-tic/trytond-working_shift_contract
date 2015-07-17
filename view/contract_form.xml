@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<!-- The COPYRIGHT file at the top level of this repository contains the full
+     copyright notices and license terms. -->
+<form string="Working Shift Contract">
+    <label name="name"/>
+    <field name="name"/>
+    <label name="party"/>
+    <field name="party"/>
+    <label name="invoicing_method"/>
+    <field name="invoicing_method"/>
+    <label name="requires_interventions"/>
+    <field name="requires_interventions"/>
+    <notebook>
+        <page id="rules" string="Rules">
+            <field name="intervention_rules" colspan="4"
+                view_ids="working_shift_contract.contract_intervention_rule_view_list"/>
+            <field name="working_shift_rules" colspan="4"
+                view_ids="working_shift_contract.contract_working_shift_rule_view_list"/>
+        </page>
+        <page name="intervention_fields">
+            <field name="intervention_fields" colspan="4"/>
+        </page>
+    </notebook>
+</form>
