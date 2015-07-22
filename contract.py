@@ -112,10 +112,15 @@ class WorkingShiftRule(RuleMixin):
     'Contract Working Shift Rule'
     __name__ = 'working_shift.contract.working_shift_rule'
     # Matching
-    hours = fields.Float('Hours')
+    hours = fields.Float('Hours', domain=[
+            ['OR',
+                ('hours', '=', None),
+                ('hours', '>', 0),
+                ],
+            ])
 
     def match(self, pattern):
-        if 'hours' in pattern:
+        if 'hours' in pattern and self.hours:
             pattern = pattern.copy()
             if self.hours < pattern.pop('hours'):
                 return False
