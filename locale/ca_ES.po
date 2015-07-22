@@ -255,16 +255,16 @@ msgid "Price per hour to use when invoice to customers."
 msgstr "Preu per hora que s'utilitzarà when es facturi als clients"
 
 msgctxt "model:ir.action,name:act_contract"
-msgid "Contracts"
-msgstr "Contractes"
+msgid "Customer Contracts"
+msgstr "Contractes de client"
 
 msgctxt "model:ir.action,name:act_invoice_customers"
 msgid "Invoice Customers"
 msgstr "Factura clients"
 
 msgctxt "model:ir.ui.menu,name:menu_contract"
-msgid "Contracts"
-msgstr "Contractes"
+msgid "Customer Contracts"
+msgstr "Contractes de client"
 
 msgctxt "model:ir.ui.menu,name:menu_invoice_customers"
 msgid "Invoice Customers"
@@ -284,11 +284,11 @@ msgstr "Camp contracte torn de treball"
 
 msgctxt "model:working_shift.contract.intervention_rule,name:"
 msgid "Working Shift Contract Intervention Rule"
-msgstr "Regla per intervenció contracte torn de treball"
+msgstr "Regla contracte per intervencions"
 
 msgctxt "model:working_shift.contract.working_shift_rule,name:"
 msgid "Contract Working Shift Rule"
-msgstr "Regla torn de treball contracte"
+msgstr "Regla contracte per torns de treball"
 
 msgctxt "model:working_shift.invoice_customers.dates,name:"
 msgid "Working Shift Invoice Customers Dates"
@@ -307,32 +307,48 @@ msgid "Contract Field"
 msgstr "Camp contracte"
 
 msgctxt "view:working_shift.contract.intervention_rule:"
+msgid "Conditions"
+msgstr "Condicions"
+
+msgctxt "view:working_shift.contract.intervention_rule:"
 msgid "Contract Intervention Rule"
-msgstr "Regla intervenció contracte"
+msgstr "Regla contracte per intervencions"
 
 msgctxt "view:working_shift.contract.intervention_rule:"
 msgid "Contract Intervention Rules"
-msgstr "Regles intervenció contracte"
+msgstr "Regles contracte per intervencions"
+
+msgctxt "view:working_shift.contract.intervention_rule:"
+msgid "Result"
+msgstr "Resultat"
+
+msgctxt "view:working_shift.contract.working_shift_rule:"
+msgid "Conditions"
+msgstr "Condicions"
 
 msgctxt "view:working_shift.contract.working_shift_rule:"
 msgid "Contract Working Shift Rule"
-msgstr "Regla torn de treball contracte"
+msgstr "Regla contracte per torns de treball"
 
 msgctxt "view:working_shift.contract.working_shift_rule:"
 msgid "Contract Working Shift Rules"
-msgstr "Regles torn de treball contracte"
+msgstr "Regles contracte per torns de treball"
+
+msgctxt "view:working_shift.contract.working_shift_rule:"
+msgid "Result"
+msgstr "Resultat"
+
+msgctxt "view:working_shift.contract:"
+msgid "Customer Contract"
+msgstr "Contracte de client"
+
+msgctxt "view:working_shift.contract:"
+msgid "Customer Contracts"
+msgstr "Contractes de client"
 
 msgctxt "view:working_shift.contract:"
 msgid "Rules"
 msgstr "Regles"
-
-msgctxt "view:working_shift.contract:"
-msgid "Working Shift Contract"
-msgstr "Contracte torn de treball"
-
-msgctxt "view:working_shift.contract:"
-msgid "Working Shift Contracts"
-msgstr "Contractes torn de treball"
 
 msgctxt "view:working_shift.invoice_customers.dates:"
 msgid "Create customer invoices for working shifts in this period"

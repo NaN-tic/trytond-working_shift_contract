@@ -5,8 +5,12 @@
     <label name="contract"/>
     <field name="contract"/>
     <newline/>
-    <label name="product"/>
-    <field name="product"/>
-    <label name="list_price"/>
-    <field name="list_price"/>
+    <group colspan="2" col="2" id="conditions" string="Conditions" yexpand="1" yfill="1">
+    </group>
+    <group colspan="2" col="2" id="result" string="Result" yexpand="1" yfill="1">
+        <label name="product"/>
+        <field name="product"/>
+        <label name="list_price"/>
+        <field name="list_price"/>
+    </group>
 </form>

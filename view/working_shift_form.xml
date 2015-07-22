@@ -7,7 +7,7 @@
         <label name="contract"/>
         <field name="contract"/>
     </xpath>
-    <xpath expr="/form/field[@name='interventions']" position="after">
+    <xpath expr="/form/notebook" position="after">
         <label name="customer_invoice_line"/>
         <field name="customer_invoice_line"/>
     </xpath>

@@ -29,7 +29,7 @@
         </record>
 
         <record model="ir.action.act_window" id="act_contract">
-            <field name="name">Contracts</field>
+            <field name="name">Customer Contracts</field>
             <field name="res_model">working_shift.contract</field>
         </record>
         <record model="ir.action.act_window.view" id="act_contract_view1">
