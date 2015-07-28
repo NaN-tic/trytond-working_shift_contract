@@ -164,17 +164,6 @@ class Intervention:
     @classmethod
     def __setup__(cls):
         super(Intervention, cls).__setup__()
-
-        party_invisible_states = Eval('invoicing_method') == 'working_shift'
-        if cls.party.states and 'invisible' in cls.party.states:
-            cls.party.states['invisible'] = Or(
-                cls.party.states['invisible'], party_invisible_states)
-        else:
-            if not cls.party.states:
-                cls.party.states = {}
-            cls.party.states['invisible'] = party_invisible_states
-        cls.party.depends.append('invoicing_method')
-
         cls.__rpc__.update({
                 'get_invoicing_methods': RPC(),
                 })
