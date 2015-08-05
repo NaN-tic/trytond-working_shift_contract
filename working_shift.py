@@ -183,7 +183,7 @@ class Intervention:
         Contract = pool.get('working_shift.contract')
         return Contract.invoicing_method.selection
 
-    @fields.depends('shift')
+    @fields.depends('shift', '_parent_shift.contract')
     def on_change_with_contract(self, name=None):
         if self.shift and self.shift.contract:
             return self.shift.contract.id
@@ -194,7 +194,7 @@ class Intervention:
             (('contract',) + tuple(clause[1:])),
             ]
 
-    @fields.depends('shift')
+    @fields.depends('shift', '_parent_shift.contract')
     def on_change_with_invoicing_method(self, name=None):
         pool = Pool()
         Contract = pool.get('working_shift.contract')
