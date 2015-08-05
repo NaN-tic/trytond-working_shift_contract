@@ -210,6 +210,10 @@ msgctxt "field:working_shift.contract.working_shift_rule,write_uid:"
 msgid "Write User"
 msgstr "Usuario modificación"
 
+msgctxt "field:working_shift.intervention,contract:"
+msgid "Contract"
+msgstr "Contrato"
+
 msgctxt "field:working_shift.intervention,customer_invoice_line:"
 msgid "Invoice Line"
 msgstr "Línea de factura"
