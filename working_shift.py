@@ -157,7 +157,7 @@ class Intervention:
     __name__ = 'working_shift.intervention'
     contract = fields.Function(fields.Many2One('working_shift.contract',
             'Contract'),
-        'get_contract', searcher='search_contract')
+        'on_change_with_contract', searcher='search_contract')
     invoicing_method = fields.Function(fields.Selection(
             'get_invoicing_methods', 'Invoicing Method'),
         'on_change_with_invoicing_method', searcher='search_invoicing_method')
