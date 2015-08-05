@@ -155,9 +155,12 @@ class WorkingShift:
 
 class Intervention:
     __name__ = 'working_shift.intervention'
+    contract = fields.Function(fields.Many2One('working_shift.contract',
+            'Contract'),
+        'get_contract', searcher='search_contract')
     invoicing_method = fields.Function(fields.Selection(
             'get_invoicing_methods', 'Invoicing Method'),
-        'on_change_with_invoicing_method')
+        'on_change_with_invoicing_method', searcher='search_invoicing_method')
     customer_invoice_line = fields.Many2One('account.invoice.line',
         'Invoice Line', readonly=True)
 
@@ -181,12 +184,29 @@ class Intervention:
         return Contract.invoicing_method.selection
 
     @fields.depends('shift')
+    def on_change_with_contract(self, name=None):
+        if self.shift and self.shift.contract:
+            return self.shift.contract.id
+
+    @classmethod
+    def search_contract(cls, name, clause):
+        return [
+            (('contract',) + clause[1:]),
+            ]
+
+    @fields.depends('shift')
     def on_change_with_invoicing_method(self, name=None):
         pool = Pool()
         Contract = pool.get('working_shift.contract')
-        if self.shift and self.shift.contract:
-            return self.shift.contract.invoicing_method
+        if self.contract:
+            return self.contract.invoicing_method
         return Contract.default_invoicing_method()
+
+    @classmethod
+    def search_invoicing_method(cls, name, clause):
+        return [
+            (('contract.invoicing_method',) + clause[1:]),
+            ]
 
     @classmethod
     def validate(cls, interventions):

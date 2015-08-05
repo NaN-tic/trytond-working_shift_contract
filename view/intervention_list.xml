@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<!-- The COPYRIGHT file at the top level of this repository contains the full
+     copyright notices and license terms. -->
+<data>
+    <xpath expr="/tree/field[@name='shift']" position="after">
+        <field name="contract"/>
+        <field name="invoicing_method"/>
+    </xpath>
+</data>

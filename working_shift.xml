@@ -26,6 +26,13 @@
             <field name="name">intervention_form</field>
         </record>
 
+        <record model="ir.ui.view" id="intervention_view_list">
+            <field name="model">working_shift.intervention</field>
+            <field name="type">tree</field>
+            <field name="inherit" ref="working_shift.intervention_view_list"/>
+            <field name="name">intervention_list</field>
+        </record>
+
         <!-- working_shift.invoice_customers -->
         <record model="ir.action.wizard" id="act_invoice_customers">
             <field name="name">Invoice Customers</field>
