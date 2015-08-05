@@ -194,7 +194,7 @@ class Intervention:
             (('contract',) + tuple(clause[1:])),
             ]
 
-    @fields.depends('shift', '_parent_shift.contract')
+    @fields.depends('contract')
     def on_change_with_invoicing_method(self, name=None):
         pool = Pool()
         Contract = pool.get('working_shift.contract')
