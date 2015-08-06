@@ -6,4 +6,7 @@
         <field name="contract"/>
         <field name="invoicing_method"/>
     </xpath>
+    <xpath expr="/tree" position="inside">
+        <field name="customer_invoice_line"/>
+    </xpath>
 </data>
