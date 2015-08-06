@@ -191,7 +191,7 @@ class Intervention:
     @classmethod
     def search_contract(cls, name, clause):
         return [
-            (('contract',) + tuple(clause[1:])),
+            (('shift.contract',) + tuple(clause[1:])),
             ]
 
     @fields.depends('contract')
@@ -205,7 +205,7 @@ class Intervention:
     @classmethod
     def search_invoicing_method(cls, name, clause):
         return [
-            (('contract.invoicing_method',) + tuple(clause[1:])),
+            (('shift.contract.invoicing_method',) + tuple(clause[1:])),
             ]
 
     @classmethod
