@@ -1,6 +1,7 @@
 # The COPYRIGHT file at the top level of this repository contains the full
 # copyright notices and license terms.
 from datetime import datetime, time
+from dateutil.relativedelta import relativedelta
 
 from trytond.model import ModelView, fields
 from trytond.pool import Pool, PoolMeta
@@ -288,7 +289,7 @@ class WorkingShiftInvoiceCustomersDates(ModelView):
     __name__ = 'working_shift.invoice_customers.dates'
     start_date = fields.Date('Start Date', required=True)
     end_date = fields.Date('End Date', required=True, domain=[
-            ('end_date', '>', Eval('start_date')),
+            ('end_date', '>=', Eval('start_date')),
             ], depends=['start_date'])
 
 
@@ -310,8 +311,10 @@ class WorkingShiftInvoiceCustomers(Wizard):
         shifts = WorkingShift.search([
                 ('start_date', '>=',
                     datetime.combine(self.dates.start_date, time(0, 0, 0))),
-                ('end_date', '<=',
-                    datetime.combine(self.dates.end_date, time(23, 59, 59))),
+                ('end_date', '<',
+                    datetime.combine(
+                        self.dates.end_date + relativedelta(days=1),
+                        time(0, 0, 0))),
                 ('state', '=', 'done'),
                 ])
         if shifts:
