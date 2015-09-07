@@ -25,6 +25,9 @@ class WorkingShift:
         'on_change_with_requires_interventions')
     customer_invoice_line = fields.Many2One('account.invoice.line',
         'Customer Invoice Line', readonly=True)
+    customer_contract_rule = fields.Many2One(
+        'working_shift.contract.working_shift_rule',
+        'Customer Contract Rule', readonly=True)
 
     @classmethod
     def __setup__(cls):
@@ -84,22 +87,27 @@ class WorkingShift:
         if self.customer_invoice_line:
             return None, None
 
-        invoice_line = self._get_customer_invoice_line()
+        contract_rule = self._get_customer_contract_rule()
+        invoice_line = self._get_customer_invoice_line(contract_rule)
         if invoice_line:
             invoice_line.save()
             self.customer_invoice_line = invoice_line
+            self.customer_contract_rule = contract_rule
             self.save()
 
             key = ('out_invoice', self.contract.party)
             return key, invoice_line
         return None, None
 
-    def _get_customer_invoice_line(self):
+    def _get_customer_contract_rule(self):
+        assert self.contract.invoicing_method == 'working_shift'
+        return self.contract.compute_matching_working_shift_rule(self)
+
+    def _get_customer_invoice_line(self, contract_rule):
         pool = Pool()
         InvoiceLine = pool.get('account.invoice.line')
 
         assert self.contract.invoicing_method == 'working_shift'
-        contract_rule = self.contract.compute_matching_working_shift_rule(self)
         if not contract_rule:
             return
 
@@ -164,6 +172,9 @@ class Intervention:
         'on_change_with_invoicing_method', searcher='search_invoicing_method')
     customer_invoice_line = fields.Many2One('account.invoice.line',
         'Invoice Line', readonly=True)
+    customer_contract_rule = fields.Many2One(
+        'working_shift.contract.working_shift_rule',
+        'Customer Contract Rule', readonly=True)
 
     @classmethod
     def __setup__(cls):
@@ -243,7 +254,8 @@ class Intervention:
         if self.customer_invoice_line:
             return None, None
 
-        invoice_line = self._get_customer_invoice_line()
+        contract_rule = self._get_customer_contract_rule()
+        invoice_line = self._get_customer_invoice_line(contract_rule)
         if invoice_line:
             invoice_line.save()
             self.customer_invoice_line = invoice_line
@@ -254,19 +266,23 @@ class Intervention:
             return key, invoice_line
         return None, None
 
-    def _get_customer_invoice_line(self):
+    def _get_customer_contract_rule(self):
+        assert self.invoicing_method == 'intervention'
+        contract = self.shift.contract
+        return contract.compute_matching_intervention_rule(self)
+
+    def _get_customer_invoice_line(self, contract_rule):
         pool = Pool()
         InvoiceLine = pool.get('account.invoice.line')
 
         assert self.invoicing_method == 'intervention'
-        contract = self.shift.contract
-        contract_rule = contract.compute_matching_intervention_rule(self)
         if not contract_rule:
             return
 
         invoice_line = InvoiceLine()
         invoice_line.invoice_type = 'out_invoice'
-        invoice_line.party = self.party if self.party else contract.party
+        invoice_line.party = (self.party if self.party
+            else self.shift.contract.party)
         invoice_line.type = 'line'
         invoice_line.description = contract_rule.product.rec_name  # TODO
         invoice_line.origin = self

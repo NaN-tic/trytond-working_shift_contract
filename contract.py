@@ -75,6 +75,7 @@ class Contract(ModelSQL, ModelView):
 
 
 class RuleMixin(ModelSQL, ModelView, MatchMixin):
+    name = fields.Char('Name', required=True)
     contract = fields.Many2One('working_shift.contract', 'Contract',
         required=True, select=True, ondelete='CASCADE')
     sequence = fields.Integer('Sequence')

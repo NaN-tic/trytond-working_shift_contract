@@ -3,6 +3,7 @@
      copyright notices and license terms. -->
 <tree string="Contract Working Shift Rules" sequence="sequence">
     <field name="contract"/>
+    <field name="name"/>
     <field name="hours"/>
     <field name="product"/>
     <field name="list_price"/>

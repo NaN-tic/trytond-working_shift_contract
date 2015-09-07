@@ -30,6 +30,10 @@ msgctxt "field:working_shift,contract:"
 msgid "Contract"
 msgstr "Contrato"
 
+msgctxt "field:working_shift,customer_contract_rule:"
+msgid "Customer Contract Rule"
+msgstr "Regla contrato cliente"
+
 msgctxt "field:working_shift,customer_invoice_line:"
 msgid "Customer Invoice Line"
 msgstr "Línea de factura de cliente"
@@ -146,6 +150,10 @@ msgctxt "field:working_shift.contract.intervention_rule,list_price:"
 msgid "List Price"
 msgstr "Precio de venta"
 
+msgctxt "field:working_shift.contract.intervention_rule,name:"
+msgid "Name"
+msgstr "Nombre"
+
 msgctxt "field:working_shift.contract.intervention_rule,product:"
 msgid "Product"
 msgstr "Producto"
@@ -190,6 +198,10 @@ msgctxt "field:working_shift.contract.working_shift_rule,list_price:"
 msgid "List Price"
 msgstr "Precio de venta"
 
+msgctxt "field:working_shift.contract.working_shift_rule,name:"
+msgid "Name"
+msgstr "Nombre"
+
 msgctxt "field:working_shift.contract.working_shift_rule,product:"
 msgid "Product"
 msgstr "Producto"
@@ -213,6 +225,10 @@ msgstr "Usuario modificación"
 msgctxt "field:working_shift.intervention,contract:"
 msgid "Contract"
 msgstr "Contrato"
+
+msgctxt "field:working_shift.intervention,customer_contract_rule:"
+msgid "Customer Contract Rule"
+msgstr "Regla contrato cliente"
 
 msgctxt "field:working_shift.intervention,customer_invoice_line:"
 msgid "Invoice Line"

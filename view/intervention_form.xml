@@ -5,5 +5,7 @@
     <xpath expr="/form/field[@name='comments']" position="after">
         <label name="customer_invoice_line"/>
         <field name="customer_invoice_line"/>
+        <label name="customer_contract_rule"/>
+        <field name="customer_contract_rule"/>
     </xpath>
 </data>

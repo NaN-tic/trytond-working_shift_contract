@@ -8,5 +8,6 @@
     </xpath>
     <xpath expr="/tree" position="inside">
         <field name="customer_invoice_line"/>
+        <field name="customer_contract_rule" tree_invisible="1"/>
     </xpath>
 </data>

@@ -3,6 +3,7 @@
      copyright notices and license terms. -->
 <tree string="Contract Intervention Rules" sequence="sequence">
     <field name="contract"/>
+    <field name="name"/>
     <field name="product"/>
     <field name="list_price"/>
 </tree>
