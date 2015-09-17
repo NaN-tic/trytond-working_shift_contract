@@ -7,6 +7,6 @@
     </xpath>
     <xpath expr="/tree/field[@name='state']" position="before">
         <field name="customer_invoice_line"/>
-        <field name="customer_contract_rule" tree_invisible="1"/>
+        <field name="customer_contract_rule"/>
     </xpath>
 </data>
