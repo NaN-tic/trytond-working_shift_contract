@@ -41,7 +41,7 @@ class WorkingShift:
                 interventions_states_clause)
         else:
             if not cls.interventions.states:
-                cls.intervetions.states = {}
+                cls.interventions.states = {}
             cls.interventions.states['required'] = interventions_states_clause
         cls.interventions.depends.append('contract')
 
