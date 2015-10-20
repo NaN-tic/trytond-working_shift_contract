@@ -82,7 +82,7 @@ class RuleMixin(ModelSQL, ModelView, MatchMixin):
     # Result
     product = fields.Many2One('product.product', 'Product', required=True,
         domain=[
-            ('default_uom', '=', Id('product', 'uom_unit'))
+            ('default_uom.category', '=', Id('product', 'uom_cat_unit'))
             ])
     list_price = fields.Numeric('List Price', digits=(16, DIGITS),
         required=True, help="Price per hour to use when invoice to customers.")
