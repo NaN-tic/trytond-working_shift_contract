@@ -152,7 +152,7 @@ class WorkingShift:
         invoice_address = party.address_get(type='invoice')
         payment_term = party.customer_payment_term
 
-        return Invoice(
+        invoice = Invoice(
             type=invoice_type,
             journal=journal,
             party=party,
@@ -160,6 +160,9 @@ class WorkingShift:
             account=party.account_receivable,
             payment_term=payment_term,
             )
+        if hasattr(Invoice, 'payment_type'):
+            invoice.payment_type = party.customer_payment_type
+        return invoice
 
 
 class Intervention:
