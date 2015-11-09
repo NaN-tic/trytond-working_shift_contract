@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<!-- The COPYRIGHT file at the top level of this repository contains the full
+     copyright notices and license terms. -->
+<data>
+    <xpath expr="/form/notebook" position="inside">
+    	<page id="working_shifts" string="Working Shifts &#38; Interventions">
+    		<field name="working_shifts" colspan="4"/>
+    		<field name="interventions" colspan="4"/>
+    	</page>
+    </xpath>
+</data>

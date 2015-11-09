@@ -44,37 +44,100 @@ class WorkingShift:
                 cls.interventions.states = {}
             cls.interventions.states['required'] = interventions_states_clause
         cls.interventions.depends.append('contract')
+        cls._error_messages.update({
+                'invoiced_working_shift': ('You cannot cancel the working '
+                    'shift "%s" because it is already invoiced.'),
+                'invoiced_working_shift_interventions': (
+                    'You cannot cancel the working shift "%s" because some of '
+                    'its interventions are already invoiced.'),
+                'missing_account_revenue': ('The product "%s" used to invoice '
+                    'working shifts doesn\'t have Revenue Account.'),
+                })
 
     @fields.depends('contract')
     def on_change_with_requires_interventions(self, name=None):
         return self.contract.requires_interventions if self.contract else False
 
     @classmethod
-    def create_customer_invoices(cls, working_shifts):
+    def cancel(cls, working_shifts):
         pool = Pool()
-        Invoice = pool.get('account.invoice')
+        InvoiceLine = pool.get('account.invoice.line')
 
-        invoice_lines_by_key = {}
+        for working_shift in working_shifts:
+            working_shift.check_cancellable()
+
+        super(WorkingShift, cls).cancel(working_shifts)
+
+        inv_line_to_write = set()
         for working_shift in working_shifts:
             if working_shift.contract.invoicing_method == 'working_shift':
-                key, invoice_line = (
-                    working_shift.create_customer_invoice_line())
-                if invoice_line:
-                    invoice_lines_by_key.setdefault(key,
-                        []).append(invoice_line)
+                if working_shift.customer_invoice_line:
+                    working_shift.customer_invoice_line.quantity -= 1
+                    inv_line_to_write.add(working_shift.customer_invoice_line)
             elif working_shift.contract.invoicing_method == 'intervention':
                 for intervention in working_shift.interventions:
-                    key, invoice_line = (
-                        intervention.create_customer_invoice_line())
-                    if invoice_line:
-                        invoice_lines_by_key.setdefault(key,
-                            []).append(invoice_line)
+                    if intervention.customer_invoice_line:
+                        intervention.customer_invoice_line.quantity -= 1
+                        inv_line_to_write.add(
+                            intervention.customer_invoice_line)
+        if inv_line_to_write:
+            to_write = []
+            for invoice_line in inv_line_to_write:
+                to_write.extend(([invoice_line], invoice_line._save_values))
+            InvoiceLine.write(*to_write)
+
+    def check_cancellable(self):
+        if self.contract.invoicing_method == 'working_shift':
+            if (self.customer_invoice_line
+                    and self.customer_invoice_line.invoice
+                    and self.customer_invoice_line.invoice.state
+                    not in ('cancel', 'draft')):
+                self.raise_user_error('invoiced_working_shift', self.rec_name)
+        elif self.contract.invoicing_method == 'intervention':
+            invoiced_interventions = [i for i in self.interventions
+                if i.customer_invoice_line and i.customer_invoice_line.invoice
+                and i.customer_invoice_line.state not in ('cancel', 'draft')]
+            if invoiced_interventions:
+                self.raise_user_error('invoiced_working_shift_interventions',
+                    self.rec_name)
+
+    @classmethod
+    def create_customer_invoices(cls, working_shifts):
+        pool = Pool()
+        Intervention = pool.get('working_shift.intervention')
+        Invoice = pool.get('account.invoice')
+
+        party2working_shifts = {}
+        party2interventions = {}
+        for working_shift in working_shifts:
+            if working_shift.contract.invoicing_method == 'working_shift':
+                party2working_shifts.setdefault(
+                    working_shift.contract.party, []).append(working_shift)
+            elif working_shift.contract.invoicing_method == 'intervention':
+                for intervention in working_shift.interventions:
+                    party = (intervention.party if intervention.party
+                        else intervention.shift.contract.party)
+                    party2interventions.setdefault(
+                        party, []).append(intervention)
+
+        party2invoice_lines = {}
+        for party, working_shifts_to_inv in party2working_shifts.iteritems():
+            inv_lines = cls.create_customer_invoice_line(working_shifts_to_inv,
+                party)
+            if inv_lines:
+                party2invoice_lines.setdefault(party, []).extend(inv_lines)
+
+        for party, interventions_to_inv in party2interventions.iteritems():
+            inv_lines = Intervention.create_customer_invoice_line(
+                interventions_to_inv, party)
+            if inv_lines:
+                party2invoice_lines.setdefault(party, []).extend(inv_lines)
 
         invoices = []
-        for invoice_key, invoice_lines in invoice_lines_by_key.iteritems():
-            invoice = cls._get_invoice(invoice_key)
+        for party, invoice_lines in party2invoice_lines.iteritems():
+            invoice = cls._get_invoice('out_invoice', party)
             if hasattr(invoice, 'lines'):
-                invoice_lines = invoice.lines + invoice_lines
+                invoice_lines = invoice.lines + tuple(invoice_lines)
             invoice.lines = invoice_lines
             invoice.save()
 
@@ -82,62 +145,71 @@ class WorkingShift:
             invoices.append(invoice)
         return invoices
 
-    def create_customer_invoice_line(self):
-        assert self.contract.invoicing_method == 'working_shift'
-        if self.customer_invoice_line:
-            return None, None
+    @classmethod
+    def create_customer_invoice_line(cls, working_shifts, party):
+        rule2working_shifts = {}
+        for working_shift in working_shifts:
+            assert working_shift.contract.invoicing_method == 'working_shift'
+            if working_shift.customer_invoice_line:
+                continue
+            rule = working_shift._get_customer_contract_rule()
+            rule2working_shifts.setdefault(rule, []).append(working_shift)
 
-        contract_rule = self._get_customer_contract_rule()
-        invoice_line = self._get_customer_invoice_line(contract_rule)
-        if invoice_line:
-            invoice_line.save()
-            self.customer_invoice_line = invoice_line
-            self.customer_contract_rule = contract_rule
-            self.save()
-
-            key = ('out_invoice', self.contract.party)
-            return key, invoice_line
-        return None, None
+        inv_lines = []
+        for rule, rule_working_shifts in rule2working_shifts.iteritems():
+            invoice_line = cls._get_customer_invoice_line(rule, party,
+                len(rule_working_shifts))
+            if invoice_line:
+                invoice_line.save()
+                cls.write(rule_working_shifts, {
+                        'customer_invoice_line': invoice_line.id,
+                        'customer_contract_rule': rule.id,
+                        })
+                inv_lines.append(invoice_line)
+        return inv_lines
 
     def _get_customer_contract_rule(self):
         assert self.contract.invoicing_method == 'working_shift'
         return self.contract.compute_matching_working_shift_rule(self)
 
-    def _get_customer_invoice_line(self, contract_rule):
+    @classmethod
+    def _get_customer_invoice_line(cls, contract_rule, party, quantity):
         pool = Pool()
         InvoiceLine = pool.get('account.invoice.line')
 
-        assert self.contract.invoicing_method == 'working_shift'
         if not contract_rule:
             return
+        assert contract_rule.contract.invoicing_method == 'working_shift'
+        if not contract_rule.product.account_revenue_used:
+            cls.raise_user_error('missing_account_revenue',
+                contract_rule.product.rec_name)
 
         invoice_line = InvoiceLine()
         invoice_line.invoice_type = 'out_invoice'
-        invoice_line.party = self.contract.party
+        invoice_line.party = party
         invoice_line.type = 'line'
-        invoice_line.description = contract_rule.product.rec_name  # TODO
-        invoice_line.origin = self
+        invoice_line.description = '%s - %s' % (contract_rule.contract.name,
+            contract_rule.name)
         invoice_line.product = contract_rule.product
         invoice_line.unit_price = contract_rule.list_price
-        invoice_line.quantity = 1.0
+        invoice_line.quantity = quantity
         invoice_line.unit = contract_rule.product.default_uom
         invoice_line.taxes = contract_rule.product.customer_taxes_used
         invoice_line.account = contract_rule.product.account_revenue_used
-        if not invoice_line.account:
-            self.raise_user_error('missing_account_revenue', {
-                    'working_shift': self.rec_name,
-                    'product': contract_rule.product.rec_name,
-                    })
         return invoice_line
 
     @classmethod
-    def _get_invoice(cls, invoice_key):
+    def _get_invoice(cls, invoice_type, party):
         pool = Pool()
         Invoice = pool.get('account.invoice')
         Journal = pool.get('account.journal')
 
-        invoice_type = invoice_key[0]
-        party = invoice_key[1]
+        invoices = Invoice.search([
+                ('type', '=', invoice_type),
+                ('party', '=', party.id),
+                ])
+        if invoices:
+            return invoices[0]
 
         journal_type = ('revenue' if invoice_type == 'out_invoice'
             else 'expense')
@@ -161,7 +233,10 @@ class WorkingShift:
             payment_term=payment_term,
             )
         if hasattr(Invoice, 'payment_type'):
-            invoice.payment_type = party.customer_payment_type
+            if invoice_type in ('out_invoice', 'out_credit_note'):
+                invoice.payment_type = party.customer_payment_type
+            else:
+                invoice.payment_type = party.supplier_payment_type
         return invoice
 
 
@@ -190,6 +265,8 @@ class Intervention:
                 'missing_required_field_contract': ('The field "%(field)s" '
                     'of Working Shift Intervention "%(intervention)s" is '
                     'required because of the shift\'s contract.'),
+                'missing_account_revenue': ('The product "%s" used to invoice '
+                    'interventions doesn\'t have Revenue Account.'),
                 })
 
     @staticmethod
@@ -252,54 +329,58 @@ class Intervention:
                             'field': field.field_description,
                             })
 
-    def create_customer_invoice_line(self):
-        assert self.invoicing_method == 'intervention'
-        if self.customer_invoice_line:
-            return None, None
+    @classmethod
+    def create_customer_invoice_line(cls, interventions, party):
+        rule2interventions = {}
+        for intervention in interventions:
+            assert intervention.invoicing_method == 'intervention'
+            if intervention.customer_invoice_line:
+                continue
+            rule = intervention._get_customer_contract_rule()
+            rule2interventions.setdefault(rule, []).append(intervention)
 
-        contract_rule = self._get_customer_contract_rule()
-        invoice_line = self._get_customer_invoice_line(contract_rule)
-        if invoice_line:
-            invoice_line.save()
-            self.customer_invoice_line = invoice_line
-            self.save()
-
-            party = self.party if self.party else self.shift.contract.party
-            key = ('out_invoice', party)
-            return key, invoice_line
-        return None, None
+        inv_lines = []
+        for rule, rule_interventions in rule2interventions.iteritems():
+            invoice_line = cls._get_customer_invoice_line(rule, party,
+                len(rule_interventions))
+            if invoice_line:
+                invoice_line.save()
+                cls.write(rule_interventions, {
+                        'customer_invoice_line': invoice_line.id,
+                        'customer_contract_rule': rule.id,
+                        })
+                inv_lines.append(invoice_line)
+        return inv_lines
 
     def _get_customer_contract_rule(self):
         assert self.invoicing_method == 'intervention'
         contract = self.shift.contract
         return contract.compute_matching_intervention_rule(self)
 
-    def _get_customer_invoice_line(self, contract_rule):
+    @classmethod
+    def _get_customer_invoice_line(cls, contract_rule, party, quantity):
         pool = Pool()
         InvoiceLine = pool.get('account.invoice.line')
 
-        assert self.invoicing_method == 'intervention'
         if not contract_rule:
             return
+        assert contract_rule.contract.invoicing_method == 'intervention'
+        if not contract_rule.product.account_revenue_used:
+            cls.raise_user_error('missing_account_revenue',
+                contract_rule.product.rec_name)
 
         invoice_line = InvoiceLine()
         invoice_line.invoice_type = 'out_invoice'
-        invoice_line.party = (self.party if self.party
-            else self.shift.contract.party)
+        invoice_line.party = party
         invoice_line.type = 'line'
-        invoice_line.description = contract_rule.product.rec_name  # TODO
-        invoice_line.origin = self
+        invoice_line.description = '%s - %s' % (contract_rule.contract.name,
+            contract_rule.name)
         invoice_line.product = contract_rule.product
         invoice_line.unit_price = contract_rule.list_price
-        invoice_line.quantity = 1
+        invoice_line.quantity = quantity
         invoice_line.unit = contract_rule.product.default_uom
         invoice_line.taxes = contract_rule.product.customer_taxes_used
         invoice_line.account = contract_rule.product.account_revenue_used
-        if not invoice_line.account:
-            self.raise_user_error('missing_account_revenue', {
-                    'intervention': self.rec_name,
-                    'product': contract_rule.product.rec_name,
-                    })
         return invoice_line
 
 
