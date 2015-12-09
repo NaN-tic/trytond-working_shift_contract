@@ -44,7 +44,7 @@ msgid ""
 " are already invoiced."
 msgstr ""
 "No puede cancelar el turno de trabajo \"%s\" porque alguna de sus "
-"intervenciones ya está facturada."
+"intervenciones ya están facturadas."
 
 msgctxt "field:account.invoice.line,interventions:"
 msgid "Interventions"
