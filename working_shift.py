@@ -176,6 +176,7 @@ class WorkingShift:
     def _get_customer_invoice_line(cls, contract_rule, party, quantity):
         pool = Pool()
         InvoiceLine = pool.get('account.invoice.line')
+        Tax = pool.get('account.tax')
 
         if not contract_rule:
             return
@@ -194,8 +195,22 @@ class WorkingShift:
         invoice_line.unit_price = contract_rule.list_price
         invoice_line.quantity = quantity
         invoice_line.unit = contract_rule.product.default_uom
-        invoice_line.taxes = contract_rule.product.customer_taxes_used
         invoice_line.account = contract_rule.product.account_revenue_used
+
+        invoice_line.taxes = []
+        pattern = invoice_line._get_tax_rule_pattern()
+        for tax in contract_rule.product.customer_taxes_used:
+            if party.customer_tax_rule:
+                tax_ids = party.customer_tax_rule.apply(tax, pattern)
+                if tax_ids:
+                    invoice_line.taxes.extend(Tax.browse(tax_ids))
+                continue
+            invoice_line.taxes.append(tax.id)
+        if party.customer_tax_rule:
+            tax_ids = party.customer_tax_rule.apply(None, pattern)
+            if tax_ids:
+                invoice_line.taxes.extend(Tax.browse(tax_ids))
+
         return invoice_line
 
     @classmethod
