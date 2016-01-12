@@ -1,10 +1,9 @@
 # The COPYRIGHT file at the top level of this repository contains the full
 # copyright notices and license terms.
-from trytond.config import config
 from trytond.model import ModelSQL, ModelView, MatchMixin, fields
-from trytond.pyson import Eval, Id, If
 from trytond.pool import PoolMeta
-DIGITS = config.getint('digits', 'unit_price_digits', 4)
+from trytond.pyson import Eval, Id, If
+from trytond.modules.product import price_digits
 
 __all__ = ['Contract', 'WorkingShiftRule', 'InterventionRule', 'Field',
     'ContractField']
@@ -84,7 +83,7 @@ class RuleMixin(ModelSQL, ModelView, MatchMixin):
         domain=[
             ('default_uom.category', '=', Id('product', 'uom_cat_unit'))
             ])
-    list_price = fields.Numeric('List Price', digits=(16, DIGITS),
+    list_price = fields.Numeric('List Price', digits=price_digits,
         required=True, help="Price per hour to use when invoice to customers.")
 
     @classmethod
