@@ -205,7 +205,7 @@ class WorkingShift:
                 if tax_ids:
                     invoice_line.taxes.extend(Tax.browse(tax_ids))
                 continue
-            invoice_line.taxes.append(tax.id)
+            invoice_line.taxes.append(tax)
         if party.customer_tax_rule:
             tax_ids = party.customer_tax_rule.apply(None, pattern)
             if tax_ids:
