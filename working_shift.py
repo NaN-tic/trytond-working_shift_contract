@@ -96,7 +96,8 @@ class WorkingShift:
         elif self.contract.invoicing_method == 'intervention':
             invoiced_interventions = [i for i in self.interventions
                 if i.customer_invoice_line and i.customer_invoice_line.invoice
-                and i.customer_invoice_line.state not in ('cancel', 'draft')]
+                and i.customer_invoice_line.invoice.state
+                not in ('cancel', 'draft')]
             if invoiced_interventions:
                 self.raise_user_error('invoiced_working_shift_interventions',
                     self.rec_name)
