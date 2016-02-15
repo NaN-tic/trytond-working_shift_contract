@@ -4,6 +4,7 @@
 <tree string="Contract Intervention Rules" sequence="sequence">
     <field name="contract"/>
     <field name="name"/>
+    <field name="hours"/>
     <field name="product"/>
     <field name="list_price"/>
 </tree>
