@@ -3,10 +3,12 @@
 from datetime import datetime, time
 from dateutil.relativedelta import relativedelta
 
+from trytond import backend
 from trytond.model import ModelView, fields
 from trytond.pool import Pool, PoolMeta
 from trytond.pyson import Eval, Or
 from trytond.rpc import RPC
+from trytond.transaction import Transaction
 from trytond.wizard import Wizard, StateAction, StateView, Button
 
 from trytond.modules.working_shift.working_shift import STATES, DEPENDS
@@ -267,7 +269,7 @@ class Intervention:
     customer_invoice_line = fields.Many2One('account.invoice.line',
         'Invoice Line', readonly=True)
     customer_contract_rule = fields.Many2One(
-        'working_shift.contract.working_shift_rule',
+        'working_shift.contract.intervention_rule',
         'Customer Contract Rule', readonly=True)
 
     @classmethod
@@ -284,6 +286,18 @@ class Intervention:
                 'missing_account_revenue': ('The product "%s" used to invoice '
                     'interventions doesn\'t have Revenue Account.'),
                 })
+
+    @classmethod
+    def __register__(cls, module_name):
+        TableHandler = backend.get('TableHandler')
+        cursor = Transaction().cursor
+
+        # Migration from 3.4.0: remove invalid foreign key
+        table = TableHandler(cursor, cls, module_name)
+        table.drop_fk('customer_contract_rule')
+
+        super(Intervention, cls).__register__(module_name)
+
 
     @staticmethod
     def get_invoicing_methods():
