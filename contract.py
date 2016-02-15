@@ -73,7 +73,6 @@ class Contract(ModelSQL, ModelView):
             pattern = pattern.copy()
         pattern['hours'] = intervention.hours
         for rule in self.intervention_rules:
-            print "rule:", rule.rec_name
             if rule.match(pattern):
                 return rule
 
