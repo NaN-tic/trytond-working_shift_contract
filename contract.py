@@ -69,7 +69,11 @@ class Contract(ModelSQL, ModelView):
     def compute_matching_intervention_rule(self, intervention, pattern=None):
         if pattern is None:
             pattern = {}
+        else:
+            pattern = pattern.copy()
+        pattern['hours'] = intervention.hours
         for rule in self.intervention_rules:
+            print "rule:", rule.rec_name
             if rule.match(pattern):
                 return rule
 
@@ -79,6 +83,15 @@ class RuleMixin(ModelSQL, ModelView, MatchMixin):
     contract = fields.Many2One('working_shift.contract', 'Contract',
         required=True, select=True, ondelete='CASCADE')
     sequence = fields.Integer('Sequence')
+    # Matching
+    hours = fields.Float('Hours', domain=[
+            ['OR',
+                ('hours', '=', None),
+                ('hours', '>', 0),
+                ],
+            ],
+        help="If it is set, this rule will be used to invoice only when the "
+        "hours are less or equal than this value.")
     # Result
     product = fields.Many2One('product.product', 'Product', required=True,
         domain=[
@@ -109,24 +122,17 @@ class RuleMixin(ModelSQL, ModelView, MatchMixin):
                 }
         return {}
 
-
-class WorkingShiftRule(RuleMixin):
-    'Contract Working Shift Rule'
-    __name__ = 'working_shift.contract.working_shift_rule'
-    # Matching
-    hours = fields.Float('Hours', domain=[
-            ['OR',
-                ('hours', '=', None),
-                ('hours', '>', 0),
-                ],
-            ])
-
     def match(self, pattern):
         if 'hours' in pattern and self.hours:
             pattern = pattern.copy()
             if self.hours < pattern.pop('hours'):
                 return False
-        return super(WorkingShiftRule, self).match(pattern)
+        return super(RuleMixin, self).match(pattern)
+
+
+class WorkingShiftRule(RuleMixin):
+    'Contract Working Shift Rule'
+    __name__ = 'working_shift.contract.working_shift_rule'
 
 
 class InterventionRule(RuleMixin):
