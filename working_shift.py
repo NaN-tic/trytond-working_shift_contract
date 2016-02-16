@@ -225,6 +225,7 @@ class WorkingShift:
         invoices = Invoice.search([
                 ('type', '=', invoice_type),
                 ('party', '=', party.id),
+                ('state', '=', 'draft'),
                 ])
         if invoices:
             return invoices[0]
