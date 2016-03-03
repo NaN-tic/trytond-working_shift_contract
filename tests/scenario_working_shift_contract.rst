@@ -229,12 +229,14 @@ Create contracts::
     >>> contract_ws.invoicing_method = 'working_shift'
     >>> contract_ws.requires_interventions = True
     >>> rule = contract_ws.working_shift_rules.new()
+    >>> rule.name = 'Rule 1'
     >>> rule.sequence = 1
     >>> rule.hours = 4.5
     >>> rule.product = service_short_module
     >>> rule.list_price
     Decimal('300')
     >>> rule = contract_ws.working_shift_rules.new()
+    >>> rule.name = 'Rule 2'
     >>> rule.sequence = 2
     >>> rule.hours = 8
     >>> rule.product = service_large_module
@@ -249,6 +251,7 @@ Create contracts::
     >>> contract_int.requires_interventions
     True
     >>> rule = contract_int.intervention_rules.new()
+    >>> rule.name = 'Rule 3'
     >>> rule.sequence = 1
     >>> rule.product = service_intervention
     >>> rule.list_price
@@ -262,14 +265,14 @@ Create working shift checking constraint of required interventions::
     >>> shift1.employee == employee1
     True
     >>> shift1.contract = contract_ws
-    >>> shift1.start_date.date() == today
+    >>> shift1.start.date() == today
     True
-    >>> shift1.start_date = datetime.datetime.combine(previous_month_first,
+    >>> shift1.start = datetime.datetime.combine(previous_month_first,
     ...     datetime.time(8, 0))
-    >>> shift1.end_date = datetime.datetime.combine(previous_month_first,
+    >>> shift1.end = datetime.datetime.combine(previous_month_first,
     ...     datetime.time(11, 0))
     >>> shift1.hours
-    Decimal('3.0')
+    Decimal('3.00')
     >>> shift1.save()
     >>> shift1.click('confirm')
     Traceback (most recent call last):
@@ -277,8 +280,8 @@ Create working shift checking constraint of required interventions::
     UserError: ('UserError', (u'The field "Interventions" on "Working Shift" is required.', ''))
 
     >>> intervention = shift1.interventions.new()
-    >>> intervention.start_date = shift1.start_date
-    >>> intervention.end_date = shift1.start_date + relativedelta(hours=1)
+    >>> intervention.start = shift1.start
+    >>> intervention.end = shift1.start + relativedelta(hours=1)
     >>> shift1.save()
     >>> shift1.click('confirm')
     >>> shift1.click('done')
@@ -289,13 +292,13 @@ Create more working shifts::
     >>> shift2.employee == employee1
     True
     >>> shift2.contract = contract_ws
-    >>> shift2.start_date = datetime.datetime.combine(previous_month_first,
+    >>> shift2.start = datetime.datetime.combine(previous_month_first,
     ...     datetime.time(12, 0))
-    >>> shift2.end_date = datetime.datetime.combine(previous_month_first,
+    >>> shift2.end = datetime.datetime.combine(previous_month_first,
     ...     datetime.time(13, 0))
     >>> intervention = shift2.interventions.new()
-    >>> intervention.start_date = shift2.start_date
-    >>> intervention.end_date = shift2.start_date + relativedelta(hours=1)
+    >>> intervention.start = shift2.start
+    >>> intervention.end = shift2.start + relativedelta(hours=1)
     >>> shift2.click('confirm')
     >>> shift2.click('done')
 
@@ -303,16 +306,16 @@ Create more working shifts::
     >>> shift3 = Shift()
     >>> shift3.employee = employee2
     >>> shift3.contract = contract_ws
-    >>> shift3.start_date = datetime.datetime.combine(shift_date,
+    >>> shift3.start = datetime.datetime.combine(shift_date,
     ...     datetime.time(14, 0))
-    >>> shift3.end_date = datetime.datetime.combine(shift_date,
+    >>> shift3.end = datetime.datetime.combine(shift_date,
     ...     datetime.time(21, 0))
     >>> intervention = shift3.interventions.new()
-    >>> intervention.start_date = shift3.start_date
-    >>> intervention.end_date = shift3.start_date + relativedelta(hours=1)
+    >>> intervention.start = shift3.start
+    >>> intervention.end = shift3.start + relativedelta(hours=1)
     >>> intervention = shift3.interventions.new()
-    >>> intervention.start_date = shift3.start_date + relativedelta(hours=1.5)
-    >>> intervention.end_date = shift3.start_date + relativedelta(hours=2)
+    >>> intervention.start = shift3.start + relativedelta(hours=1.5)
+    >>> intervention.end = shift3.start + relativedelta(hours=2)
     >>> shift3.click('confirm')
     >>> shift3.click('done')
 
@@ -320,30 +323,30 @@ Create more working shifts::
     >>> shift4.employee == employee1
     True
     >>> shift4.contract = contract_int
-    >>> shift4.start_date = datetime.datetime.combine(previous_month_first,
+    >>> shift4.start = datetime.datetime.combine(previous_month_first,
     ...     datetime.time(12, 0))
-    >>> shift4.end_date = datetime.datetime.combine(previous_month_first,
+    >>> shift4.end = datetime.datetime.combine(previous_month_first,
     ...     datetime.time(13, 0))
     >>> intervention = shift4.interventions.new()
-    >>> intervention.start_date = shift4.start_date
-    >>> intervention.end_date = shift4.start_date + relativedelta(hours=1)
+    >>> intervention.start = shift4.start
+    >>> intervention.end = shift4.start + relativedelta(hours=1)
     >>> shift4.click('confirm')
     >>> shift4.click('done')
 
     >>> shift5 = Shift()
     >>> shift5.employee = employee2
     >>> shift5.contract = contract_int
-    >>> shift5.start_date = datetime.datetime.combine(shift_date,
+    >>> shift5.start = datetime.datetime.combine(shift_date,
     ...     datetime.time(14, 0))
-    >>> shift5.end_date = datetime.datetime.combine(shift_date,
+    >>> shift5.end = datetime.datetime.combine(shift_date,
     ...     datetime.time(21, 0))
     >>> intervention = shift5.interventions.new()
     >>> intervention.party = customer1
-    >>> intervention.start_date = shift5.start_date
-    >>> intervention.end_date = shift5.start_date + relativedelta(hours=1)
+    >>> intervention.start = shift5.start
+    >>> intervention.end = shift5.start + relativedelta(hours=1)
     >>> intervention = shift5.interventions.new()
-    >>> intervention.start_date = shift5.start_date + relativedelta(hours=1.5)
-    >>> intervention.end_date = shift5.start_date + relativedelta(hours=2)
+    >>> intervention.start = shift5.start + relativedelta(hours=1.5)
+    >>> intervention.end = shift5.start + relativedelta(hours=2)
     >>> shift5.click('confirm')
     >>> shift5.click('done')
 
@@ -364,17 +367,11 @@ Check working shift invoices::
     >>> shift1.customer_invoice_line.product == service_short_module
     True
     >>> shift1.customer_invoice_line.quantity
-    1.0
+    2.0
     >>> shift1.customer_invoice_line.amount
-    Decimal('300.00')
-    >>> shift2.customer_invoice_line.invoice.party == customer1
+    Decimal('600.00')
+    >>> shift2.customer_invoice_line == shift1.customer_invoice_line
     True
-    >>> shift2.customer_invoice_line.product == service_short_module
-    True
-    >>> shift2.customer_invoice_line.quantity
-    1.0
-    >>> shift2.customer_invoice_line.amount
-    Decimal('300.00')
     >>> shift3.customer_invoice_line.invoice.party == customer1
     True
     >>> shift3.customer_invoice_line.product == service_large_module
@@ -392,9 +389,11 @@ Check working shift invoices::
     >>> shift4.interventions[0].customer_invoice_line.product == service_intervention
     True
     >>> shift4.interventions[0].customer_invoice_line.quantity
-    1.0
+    2.0
     >>> shift4.interventions[0].customer_invoice_line.amount
-    Decimal('300.00')
+    Decimal('600.00')
+    >>> shift4.interventions[0].customer_invoice_line == shift5.interventions[1].customer_invoice_line
+    True
     >>> shift5.interventions[0].customer_invoice_line.invoice.party == customer1
     True
     >>> shift5.interventions[0].customer_invoice_line.product == service_intervention
@@ -403,23 +402,14 @@ Check working shift invoices::
     1.0
     >>> shift5.interventions[0].customer_invoice_line.amount
     Decimal('300.00')
-    >>> shift5.interventions[1].customer_invoice_line.invoice.party == customer2
-    True
-    >>> shift5.interventions[1].customer_invoice_line.product == service_intervention
-    True
-    >>> shift5.interventions[1].customer_invoice_line.quantity
-    1.0
-    >>> shift5.interventions[1].customer_invoice_line.amount
-    Decimal('300.00')
-
 
     >>> customer1_invoice, = Invoice.find([('party', '=', customer1.id)])
     >>> len(customer1_invoice.lines)
-    4
+    3
     >>> customer1_invoice.total_amount
     Decimal('1900.00')
     >>> customer2_invoice, = Invoice.find([('party', '=', customer2.id)])
     >>> len(customer2_invoice.lines)
-    2
+    1
     >>> customer2_invoice.total_amount
     Decimal('600.00')
