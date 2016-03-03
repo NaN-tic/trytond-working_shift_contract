@@ -1,3 +1,7 @@
+* Adapted code and tests to last changes in invoicing
+* Adapted code and tests to rename of start/end fields
+* Only reuse draft invoices
+
 Version 3.4.1 - 2016-02-15
 * Some fixes
 * Add hours condition also in interventions rules
