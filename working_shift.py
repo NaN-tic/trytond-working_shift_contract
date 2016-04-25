@@ -87,6 +87,10 @@ class WorkingShift:
             for invoice_line in inv_line_to_write:
                 to_write.extend(([invoice_line], invoice_line._save_values))
             InvoiceLine.write(*to_write)
+        cls.write(working_shifts, {
+            'customer_invoice_line': None,
+            'customer_contract_rule': None,
+            })
 
     def check_cancellable(self):
         if self.contract.invoicing_method == 'working_shift':
@@ -264,6 +268,8 @@ class WorkingShift:
             default = {}
         default = default.copy()
         default['customer_invoice_line'] = None
+        default['customer_contract_rule'] = None
+        default['state'] = 'draft'
         return super(WorkingShift, cls).copy(working_shifts, default=default)
 
 
@@ -421,6 +427,15 @@ class Intervention:
         invoice_line.taxes = contract_rule.product.customer_taxes_used
         invoice_line.account = contract_rule.product.account_revenue_used
         return invoice_line
+
+    @classmethod
+    def copy(cls, interventions, default=None):
+        if default is None:
+            default = {}
+        default = default.copy()
+        default['customer_invoice_line'] = None
+        default['customer_contract_rule'] = None
+        return super(Intervention, cls).copy(interventions, default=default)
 
 
 class WorkingShiftInvoiceCustomersDates(ModelView):
