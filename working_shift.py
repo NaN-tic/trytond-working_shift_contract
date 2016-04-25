@@ -258,6 +258,14 @@ class WorkingShift:
                 invoice.payment_type = party.supplier_payment_type
         return invoice
 
+    @classmethod
+    def copy(cls, working_shifts, default=None):
+        if default is None:
+            default = {}
+        default = default.copy()
+        default['customer_invoice_line'] = None
+        return super(WorkingShift, cls).copy(working_shifts, default=default)
+
 
 class Intervention:
     __name__ = 'working_shift.intervention'
