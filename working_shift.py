@@ -62,31 +62,11 @@ class WorkingShift:
 
     @classmethod
     def cancel(cls, working_shifts):
-        pool = Pool()
-        InvoiceLine = pool.get('account.invoice.line')
-
         for working_shift in working_shifts:
             working_shift.check_cancellable()
 
         super(WorkingShift, cls).cancel(working_shifts)
 
-        inv_line_to_write = set()
-        for working_shift in working_shifts:
-            if working_shift.contract.invoicing_method == 'working_shift':
-                if working_shift.customer_invoice_line:
-                    working_shift.customer_invoice_line.quantity -= 1
-                    inv_line_to_write.add(working_shift.customer_invoice_line)
-            elif working_shift.contract.invoicing_method == 'intervention':
-                for intervention in working_shift.interventions:
-                    if intervention.customer_invoice_line:
-                        intervention.customer_invoice_line.quantity -= 1
-                        inv_line_to_write.add(
-                            intervention.customer_invoice_line)
-        if inv_line_to_write:
-            to_write = []
-            for invoice_line in inv_line_to_write:
-                to_write.extend(([invoice_line], invoice_line._save_values))
-            InvoiceLine.write(*to_write)
         cls.write(working_shifts, {
             'customer_invoice_line': None,
             'customer_contract_rule': None,
@@ -94,19 +74,14 @@ class WorkingShift:
 
     def check_cancellable(self):
         if self.contract.invoicing_method == 'working_shift':
-            if (self.customer_invoice_line
-                    and self.customer_invoice_line.invoice
-                    and self.customer_invoice_line.invoice.state
-                    not in ('cancel', 'draft')):
+            if self.customer_invoice_line:
                 self.raise_user_error('invoiced_working_shift', self.rec_name)
         elif self.contract.invoicing_method == 'intervention':
-            invoiced_interventions = [i for i in self.interventions
-                if i.customer_invoice_line and i.customer_invoice_line.invoice
-                and i.customer_invoice_line.invoice.state
-                not in ('cancel', 'draft')]
-            if invoiced_interventions:
-                self.raise_user_error('invoiced_working_shift_interventions',
-                    self.rec_name)
+            for intervention in self.interventions:
+                if intervention.customer_invoice_line:
+                    self.raise_user_error(
+                        'invoiced_working_shift_interventions',
+                        self.rec_name)
 
     @classmethod
     def create_customer_invoices(cls, working_shifts):
