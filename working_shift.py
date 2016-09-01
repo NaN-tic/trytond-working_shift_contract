@@ -117,7 +117,7 @@ class WorkingShift:
 
         invoices = []
         for party, invoice_lines in party2invoice_lines.iteritems():
-            invoice = cls._get_invoice('out_invoice', party)
+            invoice = cls._get_invoice('out', party)
             if hasattr(invoice, 'lines'):
                 invoice_lines = invoice.lines + tuple(invoice_lines)
             invoice.lines = invoice_lines
@@ -168,7 +168,7 @@ class WorkingShift:
                 contract_rule.product.rec_name)
 
         invoice_line = InvoiceLine()
-        invoice_line.invoice_type = 'out_invoice'
+        invoice_line.invoice_type = 'out'
         invoice_line.party = party
         invoice_line.type = 'line'
         invoice_line.description = '%s - %s' % (contract_rule.contract.name,
@@ -209,7 +209,7 @@ class WorkingShift:
         if invoices:
             return invoices[0]
 
-        journal_type = ('revenue' if invoice_type == 'out_invoice'
+        journal_type = ('revenue' if invoice_type == 'out'
             else 'expense')
         journals = Journal.search([
                 ('type', '=', journal_type),
@@ -231,7 +231,7 @@ class WorkingShift:
             payment_term=payment_term,
             )
         if hasattr(Invoice, 'payment_type'):
-            if invoice_type in ('out_invoice', 'out_credit_note'):
+            if invoice_type == 'out':
                 invoice.payment_type = party.customer_payment_type
             else:
                 invoice.payment_type = party.supplier_payment_type
@@ -390,7 +390,7 @@ class Intervention:
                 contract_rule.product.rec_name)
 
         invoice_line = InvoiceLine()
-        invoice_line.invoice_type = 'out_invoice'
+        invoice_line.invoice_type = 'out'
         invoice_line.party = party
         invoice_line.type = 'line'
         invoice_line.description = '%s - %s' % (contract_rule.contract.name,
