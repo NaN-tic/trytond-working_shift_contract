@@ -51,10 +51,7 @@ class Contract(ModelSQL, ModelView):
     @fields.depends('invoicing_method')
     def on_change_invoicing_method(self):
         if self.invoicing_method == 'intervention':
-            return {
-                'requires_interventions': True,
-                }
-        return {}
+            self.requires_interventions = True
 
     def compute_matching_working_shift_rule(self, working_shift, pattern=None):
         if pattern is None:
@@ -116,10 +113,7 @@ class RuleMixin(ModelSQL, ModelView, MatchMixin):
     @fields.depends('product')
     def on_change_product(self):
         if self.product:
-            return {
-                'list_price': self.product.list_price,
-                }
-        return {}
+            self.list_price = self.product.list_price
 
     def match(self, pattern):
         if 'hours' in pattern and self.hours:
