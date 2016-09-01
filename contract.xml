@@ -43,6 +43,13 @@
             <field name="act_window" ref="act_contract"/>
         </record>
 
+        <record model="ir.model.access" id="access_contract_working_shift_default">
+            <field name="model" search="[('model', '=', 'working_shift.contract')]"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_delete" eval="False"/>
+        </record>
         <record model="ir.model.access" id="access_contract_working_shift">
             <field name="model" search="[('model', '=', 'working_shift.contract')]"/>
             <field name="group" ref="working_shift.group_working_shift"/>
