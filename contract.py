@@ -1,7 +1,7 @@
 # The COPYRIGHT file at the top level of this repository contains the full
 # copyright notices and license terms.
 from trytond.config import config
-from trytond.model import ModelSQL, ModelView, MatchMixin, fields
+from trytond.model import ModelSQL, ModelView, MatchMixin, Unique, fields
 from trytond.pyson import Eval, Id, If
 from trytond.pool import PoolMeta
 DIGITS = config.getint('digits', 'unit_price_digits', 4)
@@ -171,8 +171,10 @@ class ContractField(ModelSQL, ModelView):
     @classmethod
     def __setup__(cls):
         super(ContractField, cls).__setup__()
+        t = cls.__table__()
         cls._sql_constraints += [
-            ('contract_field_uniq', 'UNIQUE (contract, field)',
+            ('contract_field_uniq',
+                Unique(t, t.contract, t.field),
                 'The Contract + Field tuple of the Working Shift Contract '
                 'Field must be unique.'),
             ]
