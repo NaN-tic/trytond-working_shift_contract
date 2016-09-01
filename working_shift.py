@@ -431,7 +431,7 @@ class WorkingShiftInvoiceCustomers(Wizard):
             Button('Cancel', 'end', 'tryton-cancel'),
             Button('Invoice', 'invoice', 'tryton-ok', default=True),
             ])
-    invoice = StateAction('account_invoice.act_invoice_out_invoice_form')
+    invoice = StateAction('account_invoice.act_invoice_out_form')
 
     def do_invoice(self, action):
         pool = Pool()
