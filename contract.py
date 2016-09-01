@@ -4,7 +4,7 @@ from trytond.config import config
 from trytond.model import ModelSQL, ModelView, MatchMixin, Unique, fields
 from trytond.pyson import Eval, Id, If
 from trytond.pool import PoolMeta
-DIGITS = config.getint('digits', 'unit_price_digits', 4)
+DIGITS = config.getint('digits', 'unit_price_digits', default=4)
 
 __all__ = ['Contract', 'WorkingShiftRule', 'InterventionRule', 'Field',
     'ContractField']
