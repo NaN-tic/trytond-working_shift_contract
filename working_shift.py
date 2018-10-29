@@ -8,7 +8,6 @@ from trytond.model import ModelView, fields
 from trytond.pool import Pool, PoolMeta
 from trytond.pyson import Eval, Or
 from trytond.rpc import RPC
-from trytond.transaction import Transaction
 from trytond.wizard import Wizard, StateAction, StateView, Button
 
 from trytond.modules.working_shift.working_shift import STATES, DEPENDS
@@ -280,7 +279,6 @@ class Intervention:
     @classmethod
     def __register__(cls, module_name):
         TableHandler = backend.get('TableHandler')
-        cursor = Transaction().connection.cursor()
 
         # Migration from 3.4.0: remove invalid foreign key
         table = TableHandler(cls, module_name)

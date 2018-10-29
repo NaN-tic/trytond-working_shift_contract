@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <!-- The COPYRIGHT file at the top level of this repository contains the full
      copyright notices and license terms. -->
-<form string="Contract Intervention Rule" col="6">
+<form col="6">
     <label name="name"/>
     <field name="name"/>
     <label name="contract"/>

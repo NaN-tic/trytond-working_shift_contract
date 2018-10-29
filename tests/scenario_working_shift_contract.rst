@@ -9,10 +9,11 @@ Imports::
     >>> from decimal import Decimal
     >>> from operator import attrgetter
     >>> from proteus import config, Model, Wizard
+    >>> from trytond.tests.tools import activate_modules, set_user
     >>> from trytond.modules.company.tests.tools import create_company, \
     ...     get_company
     >>> from trytond.modules.account.tests.tools import create_fiscalyear, \
-    ...     create_chart, get_accounts, create_tax, set_tax_code
+    ...     create_chart, get_accounts, create_tax
     >>> from trytond.modules.account_invoice.tests.tools import \
     ...     set_fiscalyear_invoice_sequences, create_payment_term
     >>> today = datetime.date.today()
@@ -20,29 +21,18 @@ Imports::
     >>> previous_month_first = (today - relativedelta(months=1)).replace(day=1)
     >>> previous_month_last = today.replace(day=1) - relativedelta(days=1)
 
-Create database::
+Activate working_shift_contract::
 
-    >>> config = config.set_trytond()
-    >>> config.pool.test = True
-
-Install working_shift_contract::
-
-    >>> Module = Model.get('ir.module')
-    >>> module, = Module.find([('name', '=', 'working_shift_contract')])
-    >>> module.click('install')
-    >>> Wizard('ir.module.install_upgrade').execute('upgrade')
+    >>> config = activate_modules('working_shift_contract')
 
 Create company::
 
     >>> _ = create_company()
     >>> company = get_company()
-    >>> party = company.party
-
-Reload the context::
-
-    >>> User = Model.get('res.user')
-    >>> Group = Model.get('res.group')
-    >>> config._context = User.get_preferences(True, config.context)
+    >>> tax_identifier = company.party.identifiers.new()
+    >>> tax_identifier.type = 'eu_vat'
+    >>> tax_identifier.code = 'BE0897290877'
+    >>> company.party.save()
 
 Create fiscal year::
 
@@ -72,9 +62,11 @@ Create parties::
     >>> Party = Model.get('party.party')
     >>> customer1 = Party(name='Customer 1')
     >>> customer1.customer_payment_term = payment_term
+    >>> customer1.account_receivable = receivable
     >>> customer1.save()
     >>> customer2 = Party(name='Customer2')
     >>> customer2.customer_payment_term = payment_term
+    >>> customer2.account_receivable = receivable
     >>> customer2.save()
 
 Create products::
@@ -88,12 +80,13 @@ Create products::
     >>> template.type = 'service'
     >>> template.salable = True
     >>> template.list_price = Decimal('300')
-    >>> template.cost_price = Decimal('300')
     >>> template.cost_price_method = 'fixed'
     >>> template.account_expense = expense
     >>> template.account_revenue = revenue
     >>> template.save()
     >>> service_short_module, = template.products
+    >>> service_short_module.cost_price = Decimal('300')
+    >>> service_short_module.save()
 
     >>> template = ProductTemplate()
     >>> template.name = 'Large Module'
@@ -101,12 +94,13 @@ Create products::
     >>> template.type = 'service'
     >>> template.salable = True
     >>> template.list_price = Decimal('1000')
-    >>> template.cost_price = Decimal('1000')
     >>> template.cost_price_method = 'fixed'
     >>> template.account_expense = expense
     >>> template.account_revenue = revenue
     >>> template.save()
     >>> service_large_module, = template.products
+    >>> service_large_module.cost_price = Decimal('1000')
+    >>> service_large_module.save()
 
     >>> template = ProductTemplate()
     >>> template.name = 'Intervention'
@@ -114,12 +108,13 @@ Create products::
     >>> template.type = 'service'
     >>> template.salable = True
     >>> template.list_price = Decimal('300')
-    >>> template.cost_price = Decimal('100')
     >>> template.cost_price_method = 'fixed'
     >>> template.account_expense = expense
     >>> template.account_revenue = revenue
     >>> template.save()
     >>> service_intervention, = template.products
+    >>> service_intervention.cost_price = Decimal('100')
+    >>> service_intervention.save()
 
 Create Employees::
 
@@ -130,6 +125,7 @@ Create Employees::
     >>> employee1.party = employee_party
     >>> employee1.company = company
     >>> employee1.save()
+    >>> User = Model.get('res.user')
     >>> user, = User.find([])
     >>> user.employees.append(employee1)
     >>> user.employee = employee1
@@ -142,7 +138,7 @@ Create Employees::
     >>> employee2.company = company
     >>> employee2.save()
 
-    >>> config._context = User.get_preferences(True, config.context)
+    >>> set_user(user)
 
 Configure sequences::
 
@@ -211,7 +207,7 @@ Create working shift checking constraint of required interventions::
     >>> shift1.hours
     Decimal('3.00')
     >>> shift1.save()
-    >>> shift1.click('confirm')
+    >>> shift1.click('confirm')    # doctest: +IGNORE_EXCEPTION_DETAIL
     Traceback (most recent call last):
         ...
     UserError: ('UserError', (u'The field "Interventions" on "Working Shift" is required.', ''))
@@ -321,23 +317,26 @@ Check working shift invoices::
     >>> [i.customer_invoice_line != None for s in [shift4, shift5]
     ...     for i in s.interventions]
     [True, True, True]
-    >>> shift4.interventions[0].customer_invoice_line.invoice.party == customer2
+    >>> shift4_intervention = shift4.interventions[0]
+    >>> shift5_intervention0 = shift5.interventions[0]
+    >>> shift5_intervention1 = shift5.interventions[1]
+    >>> shift4_intervention.customer_invoice_line.invoice.party == customer2
     True
-    >>> shift4.interventions[0].customer_invoice_line.product == service_intervention
+    >>> shift4_intervention.customer_invoice_line.product == service_intervention
     True
-    >>> shift4.interventions[0].customer_invoice_line.quantity
+    >>> shift4_intervention.customer_invoice_line.quantity
     2.0
-    >>> shift4.interventions[0].customer_invoice_line.amount
+    >>> shift4_intervention.customer_invoice_line.amount
     Decimal('600.00')
-    >>> shift4.interventions[0].customer_invoice_line == shift5.interventions[1].customer_invoice_line
+    >>> shift4_intervention.customer_invoice_line == shift5_intervention0.customer_invoice_line
     True
-    >>> shift5.interventions[0].customer_invoice_line.invoice.party == customer1
+    >>> shift5_intervention1.customer_invoice_line.invoice.party == customer1
     True
-    >>> shift5.interventions[0].customer_invoice_line.product == service_intervention
+    >>> shift5_intervention1.customer_invoice_line.product == service_intervention
     True
-    >>> shift5.interventions[0].customer_invoice_line.quantity
+    >>> shift5_intervention1.customer_invoice_line.quantity
     1.0
-    >>> shift5.interventions[0].customer_invoice_line.amount
+    >>> shift5_intervention1.customer_invoice_line.amount
     Decimal('300.00')
 
     >>> customer1_invoice, = Invoice.find([('party', '=', customer1.id)])
