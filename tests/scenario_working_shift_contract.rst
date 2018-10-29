@@ -69,6 +69,15 @@ Create parties::
     >>> customer2.account_receivable = receivable
     >>> customer2.save()
 
+Create account category::
+
+    >>> ProductCategory = Model.get('product.category')
+    >>> account_category = ProductCategory(name="Account Category")
+    >>> account_category.accounting = True
+    >>> account_category.account_expense = expense
+    >>> account_category.account_revenue = revenue
+    >>> account_category.save()
+
 Create products::
 
     >>> ProductUom = Model.get('product.uom')
@@ -81,8 +90,7 @@ Create products::
     >>> template.salable = True
     >>> template.list_price = Decimal('300')
     >>> template.cost_price_method = 'fixed'
-    >>> template.account_expense = expense
-    >>> template.account_revenue = revenue
+    >>> template.account_category = account_category
     >>> template.save()
     >>> service_short_module, = template.products
     >>> service_short_module.cost_price = Decimal('300')
@@ -95,8 +103,7 @@ Create products::
     >>> template.salable = True
     >>> template.list_price = Decimal('1000')
     >>> template.cost_price_method = 'fixed'
-    >>> template.account_expense = expense
-    >>> template.account_revenue = revenue
+    >>> template.account_category = account_category
     >>> template.save()
     >>> service_large_module, = template.products
     >>> service_large_module.cost_price = Decimal('1000')
@@ -109,8 +116,7 @@ Create products::
     >>> template.salable = True
     >>> template.list_price = Decimal('300')
     >>> template.cost_price_method = 'fixed'
-    >>> template.account_expense = expense
-    >>> template.account_revenue = revenue
+    >>> template.account_category = account_category
     >>> template.save()
     >>> service_intervention, = template.products
     >>> service_intervention.cost_price = Decimal('100')
