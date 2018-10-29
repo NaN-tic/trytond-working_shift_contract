@@ -8,7 +8,6 @@ DIGITS = config.getint('digits', 'unit_price_digits', default=4)
 
 __all__ = ['Contract', 'WorkingShiftRule', 'InterventionRule', 'Field',
     'ContractField']
-__metaclass__ = PoolMeta
 
 
 class Contract(ModelSQL, ModelView):
@@ -133,7 +132,7 @@ class InterventionRule(RuleMixin):
     __name__ = 'working_shift.contract.intervention_rule'
 
 
-class Field:
+class Field(metaclass=PoolMeta):
     __name__ = 'ir.model.field'
     model_model = fields.Function(fields.Char('Model Name'),
         'on_change_with_model_model')

@@ -4,10 +4,9 @@ from trytond.model import fields
 from trytond.pool import PoolMeta
 
 __all__ = ['InvoiceLine']
-__metaclass__ = PoolMeta
 
 
-class InvoiceLine:
+class InvoiceLine(metaclass=PoolMeta):
     __name__ = 'account.invoice.line'
     working_shifts = fields.One2Many('working_shift', 'customer_invoice_line',
         'Working Shifts', readonly=True)

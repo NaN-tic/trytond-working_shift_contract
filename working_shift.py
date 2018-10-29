@@ -14,10 +14,9 @@ from trytond.modules.working_shift.working_shift import STATES, DEPENDS
 
 __all__ = ['WorkingShift', 'Intervention',
     'WorkingShiftInvoiceCustomersDates', 'WorkingShiftInvoiceCustomers']
-__metaclass__ = PoolMeta
 
 
-class WorkingShift:
+class WorkingShift(metaclass=PoolMeta):
     __name__ = 'working_shift'
     contract = fields.Many2One('working_shift.contract', 'Contract',
         required=True, states=STATES, depends=DEPENDS)
@@ -102,20 +101,20 @@ class WorkingShift:
                         party, []).append(intervention)
 
         party2invoice_lines = {}
-        for party, working_shifts_to_inv in party2working_shifts.iteritems():
+        for party, working_shifts_to_inv in party2working_shifts.items():
             inv_lines = cls.create_customer_invoice_line(working_shifts_to_inv,
                 party)
             if inv_lines:
                 party2invoice_lines.setdefault(party, []).extend(inv_lines)
 
-        for party, interventions_to_inv in party2interventions.iteritems():
+        for party, interventions_to_inv in party2interventions.items():
             inv_lines = Intervention.create_customer_invoice_line(
                 interventions_to_inv, party)
             if inv_lines:
                 party2invoice_lines.setdefault(party, []).extend(inv_lines)
 
         invoices = []
-        for party, invoice_lines in party2invoice_lines.iteritems():
+        for party, invoice_lines in party2invoice_lines.items():
             invoice = cls._get_invoice('out', party)
             if hasattr(invoice, 'lines'):
                 invoice_lines = invoice.lines + tuple(invoice_lines)
@@ -137,7 +136,7 @@ class WorkingShift:
             rule2working_shifts.setdefault(rule, []).append(working_shift)
 
         inv_lines = []
-        for rule, rule_working_shifts in rule2working_shifts.iteritems():
+        for rule, rule_working_shifts in rule2working_shifts.items():
             invoice_line = cls._get_customer_invoice_line(rule, party,
                 len(rule_working_shifts))
             if invoice_line:
@@ -247,7 +246,7 @@ class WorkingShift:
         return super(WorkingShift, cls).copy(working_shifts, default=default)
 
 
-class Intervention:
+class Intervention(metaclass=PoolMeta):
     __name__ = 'working_shift.intervention'
     contract = fields.Function(fields.Many2One('working_shift.contract',
             'Contract'),
@@ -330,7 +329,7 @@ class Intervention:
             interventions_by_contract.setdefault(intervention.shift.contract,
                 []).append(intervention)
         for contract, contract_interventions \
-                in interventions_by_contract.iteritems():
+                in interventions_by_contract.items():
             cls._check_contract_fields(contract_interventions, contract)
 
     @classmethod
@@ -358,7 +357,7 @@ class Intervention:
             rule2interventions.setdefault(rule, []).append(intervention)
 
         inv_lines = []
-        for rule, rule_interventions in rule2interventions.iteritems():
+        for rule, rule_interventions in rule2interventions.items():
             invoice_line = cls._get_customer_invoice_line(rule, party,
                 len(rule_interventions))
             if invoice_line:
