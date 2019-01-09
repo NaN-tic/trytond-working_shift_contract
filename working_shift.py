@@ -9,7 +9,8 @@ from trytond.pool import Pool, PoolMeta
 from trytond.pyson import Eval, Or
 from trytond.rpc import RPC
 from trytond.wizard import Wizard, StateAction, StateView, Button
-
+from trytond.i18n import gettext
+from trytond.exceptions import UserError
 from trytond.modules.working_shift.working_shift import STATES, DEPENDS
 
 __all__ = ['WorkingShift', 'Intervention',
@@ -44,15 +45,6 @@ class WorkingShift(metaclass=PoolMeta):
                 cls.interventions.states = {}
             cls.interventions.states['required'] = interventions_states_clause
         cls.interventions.depends.append('contract')
-        cls._error_messages.update({
-                'invoiced_working_shift': ('You cannot cancel the working '
-                    'shift "%s" because it is already invoiced.'),
-                'invoiced_working_shift_interventions': (
-                    'You cannot cancel the working shift "%s" because some of '
-                    'its interventions are already invoiced.'),
-                'missing_account_revenue': ('The product "%s" used to invoice '
-                    'working shifts doesn\'t have Revenue Account.'),
-                })
 
     @fields.depends('contract')
     def on_change_with_requires_interventions(self, name=None):
@@ -73,13 +65,15 @@ class WorkingShift(metaclass=PoolMeta):
     def check_cancellable(self):
         if self.contract.invoicing_method == 'working_shift':
             if self.customer_invoice_line:
-                self.raise_user_error('invoiced_working_shift', self.rec_name)
+                raise UserError(gettext(
+                    'working_shift_contract.invoiced_working_shift',
+                        ws=self.rec_name))
         elif self.contract.invoicing_method == 'intervention':
             for intervention in self.interventions:
                 if intervention.customer_invoice_line:
-                    self.raise_user_error(
-                        'invoiced_working_shift_interventions',
-                        self.rec_name)
+                    raise UserError(gettext(
+                        'working_shift_contract.invoiced_working_shift_interventions',
+                        ws=self.rec_name))
 
     @classmethod
     def create_customer_invoices(cls, working_shifts):
@@ -162,8 +156,9 @@ class WorkingShift(metaclass=PoolMeta):
             return
         assert contract_rule.contract.invoicing_method == 'working_shift'
         if not contract_rule.product.account_revenue_used:
-            cls.raise_user_error('missing_account_revenue',
-                contract_rule.product.rec_name)
+            raise UserError(gettext(
+                'working_shift_contract.missing_account_revenue',
+                product=contract_rule.product.rec_name))
 
         invoice_line = InvoiceLine()
         invoice_line.invoice_type = 'out'
@@ -267,14 +262,6 @@ class Intervention(metaclass=PoolMeta):
                 'get_invoicing_methods': RPC(),
                 })
 
-        cls._error_messages.update({
-                'missing_required_field_contract': ('The field "%(field)s" '
-                    'of Working Shift Intervention "%(intervention)s" is '
-                    'required because of the shift\'s contract.'),
-                'missing_account_revenue': ('The product "%s" used to invoice '
-                    'interventions doesn\'t have Revenue Account.'),
-                })
-
     @classmethod
     def __register__(cls, module_name):
         TableHandler = backend.get('TableHandler')
@@ -341,10 +328,10 @@ class Intervention(metaclass=PoolMeta):
         for intervention in interventions:
             for field in required_fields:
                 if not getattr(intervention, field.name, None):
-                    cls.raise_user_error('missing_required_field_contract', {
-                            'intervention': intervention.rec_name,
-                            'field': field.field_description,
-                            })
+                    raise UserError(gettext(
+                        'working_shift_contractmissing_required_field_contract',
+                            intervention=intervention.rec_name,
+                            field=field.field_description))
 
     @classmethod
     def create_customer_invoice_line(cls, interventions, party):
@@ -383,8 +370,9 @@ class Intervention(metaclass=PoolMeta):
             return
         assert contract_rule.contract.invoicing_method == 'intervention'
         if not contract_rule.product.account_revenue_used:
-            cls.raise_user_error('missing_account_revenue',
-                contract_rule.product.rec_name)
+            raise UserError(gettext(
+                'working_shift_contract.missing_account_revenue',
+                contract=contract_rule.product.rec_name))
 
         invoice_line = InvoiceLine()
         invoice_line.invoice_type = 'out'

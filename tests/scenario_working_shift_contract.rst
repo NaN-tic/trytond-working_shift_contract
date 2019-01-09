@@ -216,8 +216,7 @@ Create working shift checking constraint of required interventions::
     >>> shift1.click('confirm')    # doctest: +IGNORE_EXCEPTION_DETAIL
     Traceback (most recent call last):
         ...
-    UserError: ('UserError', (u'The field "Interventions" on "Working Shift" is required.', ''))
-
+    trytond.model.modelstorage.RequiredValidationError: ('UserError', ('A value is required for field "Interventions" in "Working Shift".', ''))
     >>> intervention = shift1.interventions.new()
     >>> intervention.start = shift1.start
     >>> intervention.end = shift1.start + relativedelta(hours=1)
