@@ -6,14 +6,12 @@
         <!-- working_shift -->
         <record model="ir.ui.view" id="working_shift_view_form">
             <field name="model">working_shift</field>
-            <field name="type" eval="None"/>
             <field name="inherit" ref="working_shift.working_shift_view_form"/>
             <field name="name">working_shift_form</field>
         </record>
 
         <record model="ir.ui.view" id="working_shift_view_list">
             <field name="model">working_shift</field>
-            <field name="type" eval="None"/>
             <field name="inherit" ref="working_shift.working_shift_view_list"/>
             <field name="name">working_shift_list</field>
         </record>
@@ -21,14 +19,12 @@
         <!-- working_shift.intervention -->
         <record model="ir.ui.view" id="intervention_view_form">
             <field name="model">working_shift.intervention</field>
-            <field name="type" eval="None"/>
             <field name="inherit" ref="working_shift.intervention_view_form"/>
             <field name="name">intervention_form</field>
         </record>
 
         <record model="ir.ui.view" id="intervention_view_list">
             <field name="model">working_shift.intervention</field>
-            <field name="type" eval="None"/>
             <field name="inherit" ref="working_shift.intervention_view_list"/>
             <field name="name">intervention_list</field>
         </record>
