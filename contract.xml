@@ -95,14 +95,12 @@
         <!-- ir.model.field -->
         <record model="ir.ui.view" id="model_fields_view_form">
             <field name="model">ir.model.field</field>
-            <field name="type" eval="None"/>
             <field name="inherit" ref="ir.model_fields_view_form"/>
             <field name="name">ir_model_field_form</field>
         </record>
 
         <record model="ir.ui.view" id="model_fields_view_tree">
             <field name="model">ir.model.field</field>
-            <field name="type" eval="None"/>
             <field name="inherit" ref="ir.model_fields_view_tree"/>
             <field name="name">ir_model_field_list</field>
         </record>
