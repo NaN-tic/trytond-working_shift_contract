@@ -157,6 +157,8 @@ Create products::
     >>> template.account_revenue = revenue
     >>> template.save()
     >>> service_short_module, = template.products
+    >>> service_short_module.cost_price = Decimal('300')
+    >>> service_short_module.save()
 
     >>> template = ProductTemplate()
     >>> template.name = 'Large Module'
@@ -170,6 +172,8 @@ Create products::
     >>> template.account_revenue = revenue
     >>> template.save()
     >>> service_large_module, = template.products
+    >>> service_large_module.cost_price = Decimal('1000')
+    >>> service_large_module.save()
 
     >>> template = ProductTemplate()
     >>> template.name = 'Intervention'
@@ -183,6 +187,8 @@ Create products::
     >>> template.account_revenue = revenue
     >>> template.save()
     >>> service_intervention, = template.products
+    >>> service_intervention.cost_price = Decimal('100')
+    >>> service_intervention.save()
 
 Create Employees::
 
@@ -274,7 +280,7 @@ Create working shift checking constraint of required interventions::
     >>> shift1.hours
     Decimal('3.00')
     >>> shift1.save()
-    >>> shift1.click('confirm')
+    >>> shift1.click('confirm')    # doctest: +IGNORE_EXCEPTION_DETAIL
     Traceback (most recent call last):
         ...
     UserError: ('UserError', (u'The field "Interventions" on "Working Shift" is required.', ''))
@@ -384,23 +390,26 @@ Check working shift invoices::
     >>> [i.customer_invoice_line != None for s in [shift4, shift5]
     ...     for i in s.interventions]
     [True, True, True]
-    >>> shift4.interventions[0].customer_invoice_line.invoice.party == customer2
+    >>> shift4_intervention = shift4.interventions[0]
+    >>> shift5_intervention0 = shift5.interventions[0]
+    >>> shift5_intervention1 = shift5.interventions[1]
+    >>> shift4_intervention.customer_invoice_line.invoice.party == customer2
     True
-    >>> shift4.interventions[0].customer_invoice_line.product == service_intervention
+    >>> shift4_intervention.customer_invoice_line.product == service_intervention
     True
-    >>> shift4.interventions[0].customer_invoice_line.quantity
+    >>> shift4_intervention.customer_invoice_line.quantity
     2.0
-    >>> shift4.interventions[0].customer_invoice_line.amount
+    >>> shift4_intervention.customer_invoice_line.amount
     Decimal('600.00')
-    >>> shift4.interventions[0].customer_invoice_line == shift5.interventions[1].customer_invoice_line
+    >>> shift4_intervention.customer_invoice_line == shift5_intervention0.customer_invoice_line
     True
-    >>> shift5.interventions[0].customer_invoice_line.invoice.party == customer1
+    >>> shift5_intervention1.customer_invoice_line.invoice.party == customer1
     True
-    >>> shift5.interventions[0].customer_invoice_line.product == service_intervention
+    >>> shift5_intervention1.customer_invoice_line.product == service_intervention
     True
-    >>> shift5.interventions[0].customer_invoice_line.quantity
+    >>> shift5_intervention1.customer_invoice_line.quantity
     1.0
-    >>> shift5.interventions[0].customer_invoice_line.amount
+    >>> shift5_intervention1.customer_invoice_line.amount
     Decimal('300.00')
 
     >>> customer1_invoice, = Invoice.find([('party', '=', customer1.id)])
