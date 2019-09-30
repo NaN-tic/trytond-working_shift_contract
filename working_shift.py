@@ -2,16 +2,16 @@
 # copyright notices and license terms.
 from datetime import datetime, time
 from dateutil.relativedelta import relativedelta
-
 from trytond import backend
 from trytond.model import ModelView, fields
 from trytond.pool import Pool, PoolMeta
-from trytond.pyson import Eval, Or
+from trytond.pyson import Eval, Bool
 from trytond.rpc import RPC
 from trytond.transaction import Transaction
 from trytond.wizard import Wizard, StateAction, StateView, Button
-
 from trytond.modules.working_shift.working_shift import STATES, DEPENDS
+from decimal import Decimal
+import pytz
 
 __all__ = ['WorkingShift', 'Intervention',
     'WorkingShiftInvoiceCustomersDates', 'WorkingShiftInvoiceCustomers']
@@ -30,6 +30,21 @@ class WorkingShift:
     customer_contract_rule = fields.Many2One(
         'working_shift.contract.working_shift_rule',
         'Customer Contract Rule', readonly=True)
+    date = fields.Date('Date', required=True)
+    estimated_start = fields.DateTime('Estimated Start', required=True,
+        states=STATES, depends=DEPENDS)
+    estimated_end = fields.DateTime('Estimated End',
+        domain=[
+            ['OR',
+                ('estimated_end', '=', None),
+                ('estimated_end', '>', Eval('estimated_start')),
+                ],
+            ],
+        states={
+            'required': Eval('state').in_(['confirmed', 'done']),
+            }, depends=(DEPENDS + ['estimated_start']))
+    estimated_hours = fields.Function(fields.Numeric('Estimated Hours',
+            digits=(16, 2)), 'on_change_with_estimated_hours')
 
     @classmethod
     def __setup__(cls):
@@ -38,14 +53,31 @@ class WorkingShift:
             & Eval('requires_interventions', False))
         if (cls.interventions.states
                 and cls.interventions.states.get('required')):
-            cls.interventions.states['required'] = Or(
-                cls.interventions.states['required'],
-                interventions_states_clause)
+            cls.interventions.states['required'] |= interventions_states_clause
         else:
             if not cls.interventions.states:
                 cls.interventions.states = {}
             cls.interventions.states['required'] = interventions_states_clause
         cls.interventions.depends.append('contract')
+
+        if cls.start.states:
+            if cls.start.states.get('readonly'):
+                cls.start.states['readonly'] |= Bool(Eval('end'))
+            else:
+                cls.start.states['readonly'] = Bool(Eval('end'))
+        else:
+            cls.start.states = {}
+            cls.start.states['readonly'] = Bool(Eval('end'))
+
+        if cls.end.states:
+            if cls.end.states.get('readonly'):
+                cls.end.states['readonly'] |= Bool(Eval('end'))
+            else:
+                cls.end.states['readonly'] = Bool(Eval('end'))
+        else:
+            cls.end.states = {}
+            cls.end.states['readonly'] = Bool(Eval('end'))
+
         cls._error_messages.update({
                 'invoiced_working_shift': ('You cannot cancel the working '
                     'shift "%s" because it is already invoiced.'),
@@ -54,7 +86,116 @@ class WorkingShift:
                     'its interventions are already invoiced.'),
                 'missing_account_revenue': ('The product "%s" used to invoice '
                     'working shifts doesn\'t have Revenue Account.'),
+                'employee_also_in_working_shift': ('You can\'t not assign the '
+                    'employee "%(employee)s" to the working shift '
+                    '"%(working_shift)s" because he is already assigned to '
+                    'the working shift "%(conflictive_working_shift)s" with '
+                    'the same time interval.'),
                 })
+
+    @classmethod
+    def validate(cls, records):
+        super(WorkingShift, cls).validate(records)
+        for record in records:
+            record.check_employee()
+
+    def check_employee(self):
+        pool = Pool()
+        User = pool.get('res.user')
+        WorkingShift = pool.get('working_shift')
+
+        if self.employee and self.estimated_start and self.estimated_end:
+            user = User(Transaction().user)
+            if user.company.timezone:
+                timezone = pytz.timezone(user.company.timezone)
+                offset = timezone.utcoffset(self.estimated_start)
+                start_w_offset = self.estimated_start + offset
+                offset = timezone.utcoffset(self.estimated_end)
+                end_w_offset = self.estimated_end + offset
+                start_time = start_w_offset.time()
+                end_time = end_w_offset.time()
+            else:
+                start_time = self.estimated_start.time()
+                end_time = self.estimated_end.time()
+
+            clause = [
+                ('employee', '=', self.employee),
+                ('date', '=', self.date),
+                ('contract.center', '!=', self.contract.center),
+                ['OR',
+                    [
+                        ('contract.start_time', '>=', start_time),
+                        ('contract.start_time', '<', end_time),
+                    ], [
+                        ('contract.start_time', '<=', start_time),
+                        ('contract.end_time', '>=', end_time),
+                    ], [
+                        ('contract.end_time', '>', start_time),
+                        ('contract.end_time', '<=', end_time),
+                    ],
+                ],
+            ]
+
+            conflicts = WorkingShift.search(clause)
+            if conflicts:
+                self.raise_user_error('employee_also_in_working_shift', {
+                    'employee': self.employee.rec_name,
+                    'working_shift': self.rec_name,
+                    'conflictive_working_shift': conflicts[0].rec_name
+                })
+
+    @staticmethod
+    def default_date():
+        return datetime.today().date()
+
+    def get_estimated_datetime(self, name):
+        pool = Pool()
+        User = pool.get('res.user')
+        user = User(Transaction().user)
+        # If the user's company has a defined timezone, the datetime widget
+        # shows the time with the offset of the applied timezone, this is
+        # why we must eliminate the offset if we do not want it to be
+        # applied again by the tryton client.
+        # See:
+        # http://docs.tryton.org/projects/server/en/5.2/ref/models/fields.html#datetime
+        timezone = None
+        if user.company.timezone:
+            timezone = pytz.timezone(user.company.timezone)
+
+        time = getattr(self.contract, '%s_time' % name)
+        if time:
+            result = datetime.combine(self.date, time)
+            if timezone:
+                offset = timezone.utcoffset(result)
+                result -= offset
+            return result
+
+    @fields.depends('contract', 'date')
+    def on_change_date(self, name=None):
+        changes = {}
+        if not self.contract or not self.date:
+            changes['estimated_start'] = None
+            changes['estimated_end'] = None
+        else:
+            changes['estimated_start'] = self.get_estimated_datetime('start')
+            changes['estimated_end'] = self.get_estimated_datetime('end')
+
+        return changes
+
+    @fields.depends('contract', 'date')
+    def on_change_contract(self, name=None):
+        changes = self.on_change_date()
+        return changes
+
+    @fields.depends('estimated_start', 'estimated_end')
+    def on_change_with_estimated_hours(self, name=None):
+        if not self.estimated_start or not self.estimated_end:
+            return Decimal(0)
+        estimated_hours = ((self.estimated_end -
+                self.estimated_start).total_seconds() / 3600.0)
+        digits = self.__class__.estimated_hours.digits
+        return Decimal(str(estimated_hours)).quantize(
+            Decimal(str(10 ** -digits[1])))
 
     @fields.depends('contract')
     def on_change_with_requires_interventions(self, name=None):
@@ -140,7 +281,7 @@ class WorkingShift:
         inv_lines = []
         for rule, rule_working_shifts in rule2working_shifts.iteritems():
             invoice_line = cls._get_customer_invoice_line(rule, party,
-                len(rule_working_shifts))
+                rule_working_shifts)
             if invoice_line:
                 invoice_line.save()
                 cls.write(rule_working_shifts, {
@@ -155,7 +296,7 @@ class WorkingShift:
         return self.contract.compute_matching_working_shift_rule(self)
 
     @classmethod
-    def _get_customer_invoice_line(cls, contract_rule, party, quantity):
+    def _get_customer_invoice_line(cls, contract_rule, party, working_shifts):
         pool = Pool()
         InvoiceLine = pool.get('account.invoice.line')
         Tax = pool.get('account.tax')
@@ -166,7 +307,6 @@ class WorkingShift:
         if not contract_rule.product.account_revenue_used:
             cls.raise_user_error('missing_account_revenue',
                 contract_rule.product.rec_name)
-
         invoice_line = InvoiceLine()
         invoice_line.invoice_type = 'out_invoice'
         invoice_line.party = party
@@ -175,7 +315,8 @@ class WorkingShift:
             contract_rule.name)
         invoice_line.product = contract_rule.product
         invoice_line.unit_price = contract_rule.list_price
-        invoice_line.quantity = quantity
+        invoice_line.quantity = \
+            cls._get_customer_invoice_line_quantity(contract_rule, working_shifts)
         invoice_line.unit = contract_rule.product.default_uom
         invoice_line.account = contract_rule.product.account_revenue_used
 
@@ -194,6 +335,10 @@ class WorkingShift:
                 invoice_line.taxes.extend(Tax.browse(tax_ids))
 
         return invoice_line
+
+    @classmethod
+    def _get_customer_invoice_line_quantity(cls, contract_rule, working_shifts):
+        return len(working_shifts)
 
     @classmethod
     def _get_invoice(cls, invoice_type, party):
@@ -287,7 +432,6 @@ class Intervention:
         table.drop_fk('customer_contract_rule')
 
         super(Intervention, cls).__register__(module_name)
-
 
     @staticmethod
     def get_invoicing_methods():
@@ -438,9 +582,9 @@ class WorkingShiftInvoiceCustomers(Wizard):
         WorkingShift = pool.get('working_shift')
 
         shifts = WorkingShift.search([
-                ('start', '>=',
+                ('date', '>=',
                     datetime.combine(self.dates.start_date, time(0, 0, 0))),
-                ('start', '<',
+                ('date', '<',
                     datetime.combine(
                         self.dates.end_date + relativedelta(days=1),
                         time(0, 0, 0))),

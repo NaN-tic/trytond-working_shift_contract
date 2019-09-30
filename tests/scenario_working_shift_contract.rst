@@ -211,6 +211,13 @@ Create Employees::
     >>> employee2.company = company
     >>> employee2.save()
 
+    >>> employee_party = Party(name='Employee 3')
+    >>> employee_party.save()
+    >>> employee3 = Employee()
+    >>> employee3.party = employee_party
+    >>> employee3.company = company
+    >>> employee3.save()
+
     >>> config._context = User.get_preferences(True, config.context)
 
 Configure sequences::
@@ -226,6 +233,17 @@ Configure sequences::
     >>> working_shift_config.working_shift_sequence = working_shift_sequence
     >>> working_shift_config.save()
 
+Create centers::
+    >>> Center = Model.get('working_shift.center')
+    >>> center1 = Center()
+    >>> center1.name = 'Center 1'
+    >>> center1.color = 'green'
+    >>> center1.save()
+    >>> center2 = Center()
+    >>> center2.name = 'Center 2'
+    >>> center2.color = 'yellow'
+    >>> center2.save()
+
 Create contracts::
 
     >>> Contract = Model.get('working_shift.contract')
@@ -234,6 +252,9 @@ Create contracts::
     >>> contract_ws.party = customer1
     >>> contract_ws.invoicing_method = 'working_shift'
     >>> contract_ws.requires_interventions = True
+    >>> contract_ws.center = center1
+    >>> contract_ws.start_time = datetime.time(8, 0)
+    >>> contract_ws.end_time = datetime.time(11, 0)
     >>> rule = contract_ws.working_shift_rules.new()
     >>> rule.name = 'Rule 1'
     >>> rule.sequence = 1
@@ -256,6 +277,9 @@ Create contracts::
     >>> contract_int.invoicing_method = 'intervention'
     >>> contract_int.requires_interventions
     True
+    >>> contract_int.center = center2
+    >>> contract_int.start_time = datetime.time(8, 0)
+    >>> contract_int.end_time = datetime.time(11, 0)
     >>> rule = contract_int.intervention_rules.new()
     >>> rule.name = 'Rule 3'
     >>> rule.sequence = 1
@@ -271,6 +295,7 @@ Create working shift checking constraint of required interventions::
     >>> shift1.employee == employee1
     True
     >>> shift1.contract = contract_ws
+    >>> shift1.date = today
     >>> shift1.start.date() == today
     True
     >>> shift1.start = datetime.datetime.combine(previous_month_first,
@@ -289,6 +314,10 @@ Create working shift checking constraint of required interventions::
     >>> intervention.start = shift1.start
     >>> intervention.end = shift1.start + relativedelta(hours=1)
     >>> shift1.save()
+    >>> shift1.estimated_start.time() == contract_ws.start_time
+    True
+    >>> shift1.estimated_end.time() == contract_ws.end_time
+    True
     >>> shift1.click('confirm')
     >>> shift1.click('done')
 
@@ -298,6 +327,7 @@ Create more working shifts::
     >>> shift2.employee == employee1
     True
     >>> shift2.contract = contract_ws
+    >>> shift2.date = today
     >>> shift2.start = datetime.datetime.combine(previous_month_first,
     ...     datetime.time(12, 0))
     >>> shift2.end = datetime.datetime.combine(previous_month_first,
@@ -310,6 +340,7 @@ Create more working shifts::
 
     >>> shift_date = previous_month_first.replace(day=2)
     >>> shift3 = Shift()
+    >>> shift3.date = today
     >>> shift3.employee = employee2
     >>> shift3.contract = contract_ws
     >>> shift3.start = datetime.datetime.combine(shift_date,
@@ -326,6 +357,7 @@ Create more working shifts::
     >>> shift3.click('done')
 
     >>> shift4 = Shift()
+    >>> shift4.date = today
     >>> shift4.employee == employee1
     True
     >>> shift4.contract = contract_int
@@ -336,10 +368,46 @@ Create more working shifts::
     >>> intervention = shift4.interventions.new()
     >>> intervention.start = shift4.start
     >>> intervention.end = shift4.start + relativedelta(hours=1)
+    >>> shift4.click('confirm') # doctest: +IGNORE_EXCEPTION_DETAIL
+    Traceback (most recent call last):
+        ...
+    UserError: ...
+    >>> shift4.contract.start_time = datetime.time(9, 30)
+    >>> shift4.contract.end_time = datetime.time(10, 30)
+    >>> shift4.contract.save()
+    >>> shift4.click('confirm') # doctest: +IGNORE_EXCEPTION_DETAIL
+    Traceback (most recent call last):
+        ...
+    UserError: ...
+    >>> shift4.contract.start_time = datetime.time(7, 0)
+    >>> shift4.contract.end_time = datetime.time(9, 0)
+    >>> shift4.contract.save()
+    >>> shift4.click('confirm') # doctest: +IGNORE_EXCEPTION_DETAIL
+    Traceback (most recent call last):
+        ...
+    UserError: ...
+    >>> shift4.contract.start_time = datetime.time(10, 0)
+    >>> shift4.contract.end_time = datetime.time(12, 0)
+    >>> shift4.contract.save()
+    >>> shift4.click('confirm') # doctest: +IGNORE_EXCEPTION_DETAIL
+    Traceback (most recent call last):
+        ...
+    UserError: ...
+    >>> shift4.contract.start_time = datetime.time(7, 0)
+    >>> shift4.contract.end_time = datetime.time(12, 0)
+    >>> shift4.contract.save()
+    >>> shift4.click('confirm') # doctest: +IGNORE_EXCEPTION_DETAIL
+    Traceback (most recent call last):
+        ...
+    UserError: ...
+    >>> shift4.contract.start_time = datetime.time(11, 0)
+    >>> shift4.contract.end_time = datetime.time(13, 0)
+    >>> shift4.contract.save()
+    >>> shift4.employee = employee3
     >>> shift4.click('confirm')
     >>> shift4.click('done')
-
     >>> shift5 = Shift()
+    >>> shift5.date = today
     >>> shift5.employee = employee2
     >>> shift5.contract = contract_int
     >>> shift5.start = datetime.datetime.combine(shift_date,
@@ -360,7 +428,7 @@ Invoice customers::
 
     >>> invoice_customers = Wizard('working_shift.invoice_customers')
     >>> invoice_customers.form.start_date = previous_month_first
-    >>> invoice_customers.form.end_date = previous_month_last
+    >>> invoice_customers.form.end_date = today 
     >>> invoice_customers.execute('invoice')
 
 Check working shift invoices::
@@ -373,20 +441,19 @@ Check working shift invoices::
     >>> shift1.customer_invoice_line.product == service_short_module
     True
     >>> shift1.customer_invoice_line.quantity
-    2.0
+    3.0
     >>> shift1.customer_invoice_line.amount
-    Decimal('600.00')
+    Decimal('900.00')
     >>> shift2.customer_invoice_line == shift1.customer_invoice_line
     True
     >>> shift3.customer_invoice_line.invoice.party == customer1
     True
-    >>> shift3.customer_invoice_line.product == service_large_module
+    >>> shift3.customer_invoice_line.product == service_short_module
     True
     >>> shift3.customer_invoice_line.quantity
-    1.0
+    3.0
     >>> shift3.customer_invoice_line.amount
-    Decimal('1000.00')
-
+    Decimal('900.00')
     >>> [i.customer_invoice_line != None for s in [shift4, shift5]
     ...     for i in s.interventions]
     [True, True, True]
@@ -414,9 +481,9 @@ Check working shift invoices::
 
     >>> customer1_invoice, = Invoice.find([('party', '=', customer1.id)])
     >>> len(customer1_invoice.lines)
-    3
+    2
     >>> customer1_invoice.total_amount
-    Decimal('1900.00')
+    Decimal('1200.00')
     >>> customer2_invoice, = Invoice.find([('party', '=', customer2.id)])
     >>> len(customer2_invoice.lines)
     1
