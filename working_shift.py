@@ -2,16 +2,18 @@
 # copyright notices and license terms.
 from datetime import datetime, time
 from dateutil.relativedelta import relativedelta
-
 from trytond import backend
 from trytond.model import ModelView, fields
 from trytond.pool import Pool, PoolMeta
-from trytond.pyson import Eval, Or
+from trytond.pyson import Eval, Or, Bool
 from trytond.rpc import RPC
+from trytond.transaction import Transaction
 from trytond.wizard import Wizard, StateAction, StateView, Button
 from trytond.i18n import gettext
 from trytond.exceptions import UserError
 from trytond.modules.working_shift.working_shift import STATES, DEPENDS
+from decimal import Decimal
+import pytz
 
 __all__ = ['WorkingShift', 'Intervention',
     'WorkingShiftInvoiceCustomersDates', 'WorkingShiftInvoiceCustomers']
@@ -29,6 +31,21 @@ class WorkingShift(metaclass=PoolMeta):
     customer_contract_rule = fields.Many2One(
         'working_shift.contract.working_shift_rule',
         'Customer Contract Rule', readonly=True)
+    date = fields.Date('Date', required=True)
+    estimated_start = fields.DateTime('Estimated Start', required=True,
+        states=STATES, depends=DEPENDS)
+    estimated_end = fields.DateTime('Estimated End',
+        domain=[
+            ['OR',
+                ('estimated_end', '=', None),
+                ('estimated_end', '>', Eval('estimated_start')),
+                ],
+            ],
+        states={
+            'required': Eval('state').in_(['confirmed', 'done']),
+            }, depends=(DEPENDS + ['estimated_start']))
+    estimated_hours = fields.Function(fields.Numeric('Estimated Hours',
+            digits=(16, 2)), 'on_change_with_estimated_hours')
 
     @classmethod
     def __setup__(cls):
@@ -45,6 +62,126 @@ class WorkingShift(metaclass=PoolMeta):
                 cls.interventions.states = {}
             cls.interventions.states['required'] = interventions_states_clause
         cls.interventions.depends.append('contract')
+
+        if cls.start.states:
+            if cls.start.states.get('readonly'):
+                cls.start.states['readonly'] |= Bool(Eval('end'))
+            else:
+                cls.start.states['readonly'] = Bool(Eval('end'))
+        else:
+            cls.start.states = {}
+            cls.start.states['readonly'] = Bool(Eval('end'))
+
+        if cls.end.states:
+            if cls.end.states.get('readonly'):
+                cls.end.states['readonly'] |= Bool(Eval('end'))
+            else:
+                cls.end.states['readonly'] = Bool(Eval('end'))
+        else:
+            cls.end.states = {}
+            cls.end.states['readonly'] = Bool(Eval('end'))
+
+    @classmethod
+    def validate(cls, records):
+        super(WorkingShift, cls).validate(records)
+        for record in records:
+            record.check_employee()
+
+    def check_employee(self):
+        pool = Pool()
+        User = pool.get('res.user')
+        WorkingShift = pool.get('working_shift')
+
+        if self.employee and self.estimated_start and self.estimated_end:
+            user = User(Transaction().user)
+            if user.company.timezone:
+                timezone = pytz.timezone(user.company.timezone)
+                offset = timezone.utcoffset(self.estimated_start)
+                start_w_offset = self.estimated_start + offset
+                offset = timezone.utcoffset(self.estimated_end)
+                end_w_offset = self.estimated_end + offset
+                start_time = start_w_offset.time()
+                end_time = end_w_offset.time()
+            else:
+                start_time = self.estimated_start.time()
+                end_time = self.estimated_end.time()
+
+            clause = [
+                ('employee', '=', self.employee),
+                ('date', '=', self.date),
+                ('contract.center', '!=', self.contract.center),
+                ['OR',
+                    [
+                        ('contract.start_time', '>=', start_time),
+                        ('contract.start_time', '<', end_time),
+                    ], [
+                        ('contract.start_time', '<=', start_time),
+                        ('contract.end_time', '>=', end_time),
+                    ], [
+                        ('contract.end_time', '>', start_time),
+                        ('contract.end_time', '<=', end_time),
+                    ],
+                ],
+            ]
+
+            conflicts = WorkingShift.search(clause)
+            if conflicts:
+                module = 'working_shift_contract'
+                msg_id = 'employee_also_in_working_shift'
+                raise UserError(gettext(
+                        '{}.{}'.format(module, msg_id),
+                        employee=self.employee.rec_name,
+                        working_shift=self.rec_name,
+                        conflictive_working_shift=conflicts[0].rec_name))
+
+    @staticmethod
+    def default_date():
+        return datetime.today().date()
+
+    def get_estimated_datetime(self, name):
+        pool = Pool()
+        User = pool.get('res.user')
+        user = User(Transaction().user)
+        # If the user's company has a defined timezone, the datetime widget
+        # shows the time with the offset of the applied timezone, this is
+        # why we must eliminate the offset if we do not want it to be
+        # applied again by the tryton client.
+        # See:
+        # http://docs.tryton.org/projects/server/en/5.2/ref/models/fields.html#datetime
+        timezone = None
+        if user.company.timezone:
+            timezone = pytz.timezone(user.company.timezone)
+
+        time = getattr(self.contract, '%s_time' % name)
+        if time:
+            result = datetime.combine(self.date, time)
+            if timezone:
+                offset = timezone.utcoffset(result)
+                result -= offset
+            return result
+
+    @fields.depends('contract', 'date')
+    def on_change_date(self, name=None):
+        if not self.contract or not self.date:
+            self.estimated_start = None
+            self.estimated_end = None
+        else:
+            self.estimated_start = self.get_estimated_datetime('start')
+            self.estimated_end = self.get_estimated_datetime('end')
+
+    @fields.depends(methods=['on_change_date'])
+    def on_change_contract(self, name=None):
+        self.on_change_date()
+
+    @fields.depends('estimated_start', 'estimated_end')
+    def on_change_with_estimated_hours(self, name=None):
+        if not self.estimated_start or not self.estimated_end:
+            return Decimal(0)
+        estimated_hours = ((self.estimated_end -
+                self.estimated_start).total_seconds() / 3600.0)
+        digits = self.__class__.estimated_hours.digits
+        return Decimal(str(estimated_hours)).quantize(
+            Decimal(str(10 ** -digits[1])))
 
     @fields.depends('contract')
     def on_change_with_requires_interventions(self, name=None):
@@ -67,12 +204,14 @@ class WorkingShift(metaclass=PoolMeta):
             if self.customer_invoice_line:
                 raise UserError(gettext(
                     'working_shift_contract.invoiced_working_shift',
-                        ws=self.rec_name))
+                    ws=self.rec_name))
         elif self.contract.invoicing_method == 'intervention':
             for intervention in self.interventions:
                 if intervention.customer_invoice_line:
+                    module = 'working_shift_contract'
+                    msg_id = 'invoiced_working_shift_interventions'
                     raise UserError(gettext(
-                        'working_shift_contract.invoiced_working_shift_interventions',
+                        '{}.{}'.format(module, msg_id),
                         ws=self.rec_name))
 
     @classmethod
@@ -95,20 +234,20 @@ class WorkingShift(metaclass=PoolMeta):
                         party, []).append(intervention)
 
         party2invoice_lines = {}
-        for party, working_shifts_to_inv in party2working_shifts.items():
+        for party, working_shifts_to_inv in list(party2working_shifts.items()):
             inv_lines = cls.create_customer_invoice_line(working_shifts_to_inv,
                 party)
             if inv_lines:
                 party2invoice_lines.setdefault(party, []).extend(inv_lines)
 
-        for party, interventions_to_inv in party2interventions.items():
+        for party, interventions_to_inv in list(party2interventions.items()):
             inv_lines = Intervention.create_customer_invoice_line(
                 interventions_to_inv, party)
             if inv_lines:
                 party2invoice_lines.setdefault(party, []).extend(inv_lines)
 
         invoices = []
-        for party, invoice_lines in party2invoice_lines.items():
+        for party, invoice_lines in list(party2invoice_lines.items()):
             invoice = cls._get_invoice('out', party)
             if hasattr(invoice, 'lines'):
                 invoice_lines = invoice.lines + tuple(invoice_lines)
@@ -130,7 +269,7 @@ class WorkingShift(metaclass=PoolMeta):
             rule2working_shifts.setdefault(rule, []).append(working_shift)
 
         inv_lines = []
-        for rule, rule_working_shifts in rule2working_shifts.items():
+        for rule, rule_working_shifts in list(rule2working_shifts.items()):
             invoice_line = cls._get_customer_invoice_line(rule, party,
                 len(rule_working_shifts))
             if invoice_line:
@@ -272,7 +411,6 @@ class Intervention(metaclass=PoolMeta):
 
         super(Intervention, cls).__register__(module_name)
 
-
     @staticmethod
     def get_invoicing_methods():
         pool = Pool()
@@ -316,7 +454,7 @@ class Intervention(metaclass=PoolMeta):
             interventions_by_contract.setdefault(intervention.shift.contract,
                 []).append(intervention)
         for contract, contract_interventions \
-                in interventions_by_contract.items():
+                in list(interventions_by_contract.items()):
             cls._check_contract_fields(contract_interventions, contract)
 
     @classmethod
@@ -328,8 +466,10 @@ class Intervention(metaclass=PoolMeta):
         for intervention in interventions:
             for field in required_fields:
                 if not getattr(intervention, field.name, None):
+                    module = 'working_shift_contract'
+                    msg_id = 'missing_required_field_contract'
                     raise UserError(gettext(
-                        'working_shift_contractmissing_required_field_contract',
+                            '{}.{}'.format(module, msg_id),
                             intervention=intervention.rec_name,
                             field=field.field_description))
 
@@ -344,7 +484,7 @@ class Intervention(metaclass=PoolMeta):
             rule2interventions.setdefault(rule, []).append(intervention)
 
         inv_lines = []
-        for rule, rule_interventions in rule2interventions.items():
+        for rule, rule_interventions in list(rule2interventions.items()):
             invoice_line = cls._get_customer_invoice_line(rule, party,
                 len(rule_interventions))
             if invoice_line:
@@ -423,9 +563,9 @@ class WorkingShiftInvoiceCustomers(Wizard):
         WorkingShift = pool.get('working_shift')
 
         shifts = WorkingShift.search([
-                ('start', '>=',
+                ('date', '>=',
                     datetime.combine(self.dates.start_date, time(0, 0, 0))),
-                ('start', '<',
+                ('date', '<',
                     datetime.combine(
                         self.dates.end_date + relativedelta(days=1),
                         time(0, 0, 0))),

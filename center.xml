@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- The COPYRIGHT file at the top level of this repository contains the full
+     copyright notices and license terms. -->
+<tryton>
+    <data>
+        <record model="res.group" id="group_center_admin">
+            <field name="name">Centers Administration</field>
+        </record>
+        <record model="res.user-res.group" id="user_admin_group_center_admin">
+            <field name="user" ref="res.user_admin"/>
+            <field name="group" ref="group_center_admin"/>
+        </record>
+        <!-- center -->
+        <record model="ir.ui.view" id="center_view_list">
+            <field name="model">working_shift.center</field>
+            <field name="type">tree</field>
+            <field name="name">center_list</field>
+        </record>
+        <record model="ir.ui.view" id="center_view_form">
+            <field name="model">working_shift.center</field>
+            <field name="type">form</field>
+            <field name="name">center_form</field>
+        </record>
+        <record model="ir.action.act_window" id="act_center">
+            <field name="name">Centers</field>
+            <field name="res_model">working_shift.center</field>
+        </record>
+        <record model="ir.action.act_window.view" id="act_center_list">
+            <field name="sequence" eval="10"/>
+            <field name="view" ref="center_view_list"/>
+            <field name="act_window" ref="act_center"/>
+        </record>
+        <record model="ir.action.act_window.view" id="act_center_form">
+            <field name="sequence" eval="10"/>
+            <field name="view" ref="center_view_form"/>
+            <field name="act_window" ref="act_center"/>
+        </record>
+        <record model="ir.model.access" id="access_center">
+            <field name="model" search="[('model', '=', 'working_shift.center')]"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_delete" eval="False"/>
+        </record>
+
+        <record model="ir.model.access" id="access_center_admin">
+            <field name="model" search="[('model', '=', 'working_shift.center')]"/>
+            <field name="group" ref="group_center_admin"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_delete" eval="True"/>
+        </record>
+        <!-- Menus -->
+        <menuitem id="menu_center" name="Centers" sequence="6" />
+        <record model="ir.ui.menu-res.group"
+                id="menu_center_group_center_admin">
+            <field name="menu" ref="menu_center"/>
+            <field name="group" ref="group_center_admin"/>
+        </record>
+        <menuitem id="menu_center_list" action="act_center"
+            parent="menu_center" sequence="10"/>
+       <!-- icons -->
+        <record model="ir.ui.icon" id="red_icon">
+            <field name="name">red</field>
+            <field name="path">icons/red.svg</field>
+        </record>
+        <record model="ir.ui.icon" id="orange_icon">
+            <field name="name">orange</field>
+            <field name="path">icons/orange.svg</field>
+        </record>
+        <record model="ir.ui.icon" id="yellow_icon">
+            <field name="name">yellow</field>
+            <field name="path">icons/yellow.svg</field>
+        </record>
+        <record model="ir.ui.icon" id="green_icon">
+            <field name="name">green</field>
+            <field name="path">icons/green.svg</field>
+        </record>
+        <record model="ir.ui.icon" id="white_icon">
+            <field name="name">white</field>
+            <field name="path">icons/white.svg</field>
+        </record>
+        <record model="ir.ui.icon" id="soft_blue_icon">
+            <field name="name">soft_blue</field>
+            <field name="path">icons/soft_blue.svg</field>
+        </record>
+        <record model="ir.ui.icon" id="navy_blue_icon">
+            <field name="name">navy_blue</field>
+            <field name="path">icons/navy_blue.svg</field>
+        </record>
+    </data>
+</tryton>

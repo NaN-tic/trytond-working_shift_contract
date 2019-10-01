@@ -10,6 +10,13 @@
     <field name="invoicing_method"/>
     <label name="requires_interventions"/>
     <field name="requires_interventions"/>
+    <label name="center"/>
+    <field name="center"/>
+    <newline/>
+    <label name="start_time"/>
+    <field name="start_time"/>
+    <label name="end_time"/>
+    <field name="end_time"/>
     <notebook>
         <page id="rules" string="Rules">
             <field name="intervention_rules" colspan="4"

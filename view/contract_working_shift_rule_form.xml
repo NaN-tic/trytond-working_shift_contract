@@ -9,6 +9,10 @@
     <label name="sequence"/>
     <field name="sequence"/>
     <newline/>
+    <label name="start_date"/>
+    <field name="start_date"/>
+    <label name="end_date"/>
+    <field name="end_date"/>
     <group colspan="3" col="2" id="conditions" string="Conditions"
             yexpand="1" yfill="1">
         <label name="hours"/>

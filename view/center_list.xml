@@ -3,7 +3,5 @@
      copyright notices and license terms. -->
 <tree>
     <field name="name"/>
-    <field name="party"/>
-    <field name="invoicing_method"/>
-    <field name="center"/>
+    <field name="color" icon="color"/>
 </tree>
