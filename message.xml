@@ -15,6 +15,11 @@ this repository contains the full copyright notices and license terms. -->
       <record model="ir.message" id="missing_required_field_contract">
           <field name="text">The field "%(field)s" of Working Shift Intervention "%(intervention)s" is required because of the shift\'s contract.</field>
       </record>
-
+      <record model="ir.message" id="employee_also_in_working_shift">
+          <field name="text">You can\'t not assign the employee "%(employee)s" to the working shift "%(working_shift)s" because he is already assigned to the working shift "%(conflictive_working_shift)s" with the same time interval.</field>
+      </record>
+      <record model="ir.message" id="incorrect_start_time">
+          <field name="text">Start time can\'t be less of end time.</field>
+      </record>
     </data>
 </tryton>

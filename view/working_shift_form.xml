@@ -6,6 +6,15 @@
         <newline/>
         <label name="contract"/>
         <field name="contract"/>
+        <label name="date"/>
+        <field name="date"/>
+        <newline/>
+        <label name="estimated_start"/>
+        <field name="estimated_start"/>
+        <label name="estimated_end"/>
+        <field name="estimated_end"/>
+        <label name="estimated_hours"/>
+        <field name="estimated_hours"/>
     </xpath>
     <xpath expr="/form/notebook" position="after">
         <label name="customer_invoice_line"/>

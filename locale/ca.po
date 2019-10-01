@@ -1,4 +1,4 @@
-# 
+#
 msgid ""
 msgstr "Content-Type: text/plain; charset=utf-8\n"
 
@@ -9,6 +9,10 @@ msgid ""
 msgstr ""
 "La parella Contracte i Camp dels camps dels contractes de torns de treballs "
 "ha de ser única."
+
+msgctxt "error:working_shift.contract:"
+msgid "Start time can't be less of end time."
+msgstr "L’hora d’inici no pot ser inferior a l’hora de finalització."
 
 msgctxt "error:working_shift.intervention:"
 msgid ""
@@ -35,6 +39,16 @@ msgstr ""
 "d'ingresos."
 
 msgctxt "error:working_shift:"
+msgid ""
+"You can't not assign the employee \"%(employee)s\" to the working shift "
+"\"%(working_shift)s\" because he is already assigned to the working shift "
+"\"%(conflictive_working_shift)s\" with the same time interval."
+msgstr ""
+"No pots assignar l'empleat \"%(employee)s\" al torn de treball "
+"\"%(working_shift)s\" perquè aquest ja està assignat al torn de treball "
+"\"%(conflictive_working_shift)s\" amb el mateix interval de temps."
+
+msgctxt "error:working_shift:"
 msgid "You cannot cancel the working shift \"%s\" because it is already invoiced."
 msgstr "No pot cancel·lar el torn de treball \"%s\" perquè ja està facturat."
 
@@ -53,6 +67,38 @@ msgstr "Intervencions"
 msgctxt "field:account.invoice.line,working_shifts:"
 msgid "Working Shifts"
 msgstr "Torns de treball"
+
+msgctxt "field:working_shift.center,color:"
+msgid "Color"
+msgstr "Color"
+
+msgctxt "field:working_shift.center,create_date:"
+msgid "Create Date"
+msgstr "Data de creació"
+
+msgctxt "field:working_shift.center,create_uid:"
+msgid "Create User"
+msgstr "Usuari de creació"
+
+msgctxt "field:working_shift.center,id:"
+msgid "ID"
+msgstr "ID"
+
+msgctxt "field:working_shift.center,name:"
+msgid "Name"
+msgstr "Nom"
+
+msgctxt "field:working_shift.center,rec_name:"
+msgid "Name"
+msgstr "Nom"
+
+msgctxt "field:working_shift.center,write_date:"
+msgid "Write Date"
+msgstr "Data de modificació"
+
+msgctxt "field:working_shift.center,write_uid:"
+msgid "Write User"
+msgstr "Usuari de modificació"
 
 msgctxt "field:ir.model.field,model_model:"
 msgid "Model Name"
@@ -74,9 +120,29 @@ msgctxt "field:working_shift,customer_invoice_line:"
 msgid "Customer Invoice Line"
 msgstr "Línia de factura de client"
 
+msgctxt "field:working_shift,date:"
+msgid "Date"
+msgstr "Data"
+
+msgctxt "field:working_shift,estimated_end:"
+msgid "Estimated End Time"
+msgstr "Hora de fi teòrica"
+
+msgctxt "field:working_shift,estimated_hours:"
+msgid "Estimated Hours"
+msgstr "Hores estimades"
+
+msgctxt "field:working_shift,estimated_start:"
+msgid "Estimated Start Time"
+msgstr "Hora de inici teòrica"
+
 msgctxt "field:working_shift,requires_interventions:"
 msgid "Requires Interventions"
 msgstr "Requereix intervencions"
+
+msgctxt "field:working_shift.contract,center:"
+msgid "Center"
+msgstr "Centre"
 
 msgctxt "field:working_shift.contract,create_date:"
 msgid "Create Date"
@@ -85,6 +151,10 @@ msgstr "Data creació"
 msgctxt "field:working_shift.contract,create_uid:"
 msgid "Create User"
 msgstr "Usuari creació"
+
+msgctxt "field:working_shift.contract,end_time:"
+msgid "End Time"
+msgstr "Hora fi"
 
 msgctxt "field:working_shift.contract,id:"
 msgid "ID"
@@ -117,6 +187,10 @@ msgstr "Nom"
 msgctxt "field:working_shift.contract,requires_interventions:"
 msgid "Requires Interventions"
 msgstr "Requereix intervencions"
+
+msgctxt "field:working_shift.contract,start_time:"
+msgid "Start Time"
+msgstr "Hora inici"
 
 msgctxt "field:working_shift.contract,working_shift_rules:"
 msgid "Working Shift Rules"
@@ -178,6 +252,10 @@ msgctxt "field:working_shift.contract.intervention_rule,create_uid:"
 msgid "Create User"
 msgstr "Usuari creació"
 
+msgctxt "field:working_shift.contract.intervention_rule,end_date:"
+msgid "End Date"
+msgstr "Data final"
+
 msgctxt "field:working_shift.contract.intervention_rule,hours:"
 msgid "Hours"
 msgstr "Hores"
@@ -206,6 +284,10 @@ msgctxt "field:working_shift.contract.intervention_rule,sequence:"
 msgid "Sequence"
 msgstr "Seqüència"
 
+msgctxt "field:working_shift.contract.intervention_rule,start_date:"
+msgid "Start Date"
+msgstr "Data inicial"
+
 msgctxt "field:working_shift.contract.intervention_rule,write_date:"
 msgid "Write Date"
 msgstr "Data modificació"
@@ -225,6 +307,10 @@ msgstr "Data creació"
 msgctxt "field:working_shift.contract.working_shift_rule,create_uid:"
 msgid "Create User"
 msgstr "Usuari creació"
+
+msgctxt "field:working_shift.contract.working_shift_rule,end_date:"
+msgid "End Date"
+msgstr "Data final"
 
 msgctxt "field:working_shift.contract.working_shift_rule,hours:"
 msgid "Hours"
@@ -253,6 +339,10 @@ msgstr "Nom"
 msgctxt "field:working_shift.contract.working_shift_rule,sequence:"
 msgid "Sequence"
 msgstr "Seqüència"
+
+msgctxt "field:working_shift.contract.working_shift_rule,start_date:"
+msgid "Start Date"
+msgstr "Data inicial"
 
 msgctxt "field:working_shift.contract.working_shift_rule,write_date:"
 msgid "Write Date"
@@ -330,6 +420,18 @@ msgctxt "help:working_shift.contract.working_shift_rule,list_price:"
 msgid "Price per hour to use when invoice to customers."
 msgstr "Preu per hora que s'utilitzarà when es facturi als clients"
 
+msgctxt "model:working_shift.center,name:"
+msgid "Center"
+msgstr "Centre"
+
+msgctxt "model:ir.action,name:"
+msgid "Working Shift Calendar"
+msgstr "Agenda de Torns de treball"
+
+msgctxt "model:ir.action,name:act_center"
+msgid "Centers"
+msgstr "Centres"
+
 msgctxt "model:ir.action,name:act_contract"
 msgid "Customer Contracts"
 msgstr "Contractes de client"
@@ -338,6 +440,18 @@ msgctxt "model:ir.action,name:act_invoice_customers"
 msgid "Invoice Customers"
 msgstr "Factura clients"
 
+msgctxt "model:ir.ui.menu,name:"
+msgid "Working Shift Calendar"
+msgstr "Agenda de Torns de treball"
+
+msgctxt "model:ir.ui.menu,name:menu_center"
+msgid "Centers"
+msgstr "Centres"
+
+msgctxt "model:ir.ui.menu,name:menu_center_list"
+msgid "Centers"
+msgstr "Centres"
+
 msgctxt "model:ir.ui.menu,name:menu_contract"
 msgid "Customer Contracts"
 msgstr "Contractes de client"
@@ -345,6 +459,14 @@ msgstr "Contractes de client"
 msgctxt "model:ir.ui.menu,name:menu_invoice_customers"
 msgid "Invoice Customers"
 msgstr "Factura clients"
+
+msgctxt "model:res.group,name:group_center"
+msgid "Center"
+msgstr "Centre"
+
+msgctxt "model:res.group,name:group_center_admin"
+msgid "Centers Administration"
+msgstr "Administració de Centres"
 
 msgctxt "model:res.group,name:group_working_shift_contract"
 msgid "Working Shifts Contracts"
@@ -370,6 +492,34 @@ msgctxt "model:working_shift.invoice_customers.dates,name:"
 msgid "Working Shift Invoice Customers Dates"
 msgstr "Dates facturació clients torn de treball"
 
+msgctxt "selection:working_shift.center,color:"
+msgid "Green"
+msgstr "Verd"
+
+msgctxt "selection:working_shift.center,color:"
+msgid "Navy Blue"
+msgstr "Blau marí"
+
+msgctxt "selection:working_shift.center,color:"
+msgid "Orange"
+msgstr "Taronja"
+
+msgctxt "selection:working_shift.center,color:"
+msgid "Red"
+msgstr "Vermell"
+
+msgctxt "selection:working_shift.center,color:"
+msgid "Soft Blue"
+msgstr "Blau clar"
+
+msgctxt "selection:working_shift.center,color:"
+msgid "White"
+msgstr "Blanc"
+
+msgctxt "selection:working_shift.center,color:"
+msgid "Yellow"
+msgstr "Groc"
+
 msgctxt "selection:working_shift.contract,invoicing_method:"
 msgid "Interventions"
 msgstr "Intervencions"
@@ -381,6 +531,14 @@ msgstr "Torns de treball"
 msgctxt "view:account.invoice.line:"
 msgid "Working Shifts & Interventions"
 msgstr "Torns de treball & Intervencions"
+
+msgctxt "view:working_shift.center:"
+msgid "Centers"
+msgstr "Centres"
+
+msgctxt "view:working_shift.center:"
+msgid "Working Shift"
+msgstr "Torn de treball"
 
 msgctxt "view:working_shift.contract.field:"
 msgid "Contract Field"
@@ -437,6 +595,10 @@ msgstr "Crea factures de client pels torns de treball en aquest període."
 msgctxt "view:working_shift.invoice_customers.dates:"
 msgid "Invoice Working Shift Customers"
 msgstr "Factura torns de treballs a clients"
+
+msgctxt "view:working_shift:"
+msgid "Working Shifts"
+msgstr "Torns de treball"
 
 msgctxt "wizard_button:working_shift.invoice_customers,dates,end:"
 msgid "Cancel"

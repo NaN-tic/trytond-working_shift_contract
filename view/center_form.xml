@@ -1,9 +1,9 @@
 <?xml version="1.0"?>
 <!-- The COPYRIGHT file at the top level of this repository contains the full
      copyright notices and license terms. -->
-<tree>
+<form col="6">
+    <label name="name"/>
     <field name="name"/>
-    <field name="party"/>
-    <field name="invoicing_method"/>
-    <field name="center"/>
-</tree>
+    <label name="color"/>
+    <field name="color"/>
+</form>
