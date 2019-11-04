@@ -256,10 +256,6 @@ msgctxt "field:working_shift.contract.intervention_rule,end_date:"
 msgid "End Date"
 msgstr "Fecha final"
 
-msgctxt "field:working_shift.contract.intervention_rule,end_date:"
-msgid "End Date"
-msgstr "Fecha final"
-
 msgctxt "field:working_shift.contract.intervention_rule,hours:"
 msgid "Hours"
 msgstr "Horas"
@@ -292,10 +288,6 @@ msgctxt "field:working_shift.contract.intervention_rule,start_date:"
 msgid "Start Date"
 msgstr "Fecha inicial"
 
-msgctxt "field:working_shift.contract.intervention_rule,start_date:"
-msgid "Start Date"
-msgstr "Fecha inicial"
-
 msgctxt "field:working_shift.contract.intervention_rule,write_date:"
 msgid "Write Date"
 msgstr "Fecha modificación"
@@ -315,10 +307,6 @@ msgstr "Fecha creación"
 msgctxt "field:working_shift.contract.working_shift_rule,create_uid:"
 msgid "Create User"
 msgstr "Usuario creación"
-
-msgctxt "field:working_shift.contract.working_shift_rule,end_date:"
-msgid "End Date"
-msgstr "Fecha final"
 
 msgctxt "field:working_shift.contract.working_shift_rule,end_date:"
 msgid "End Date"
@@ -351,10 +339,6 @@ msgstr "Nombre"
 msgctxt "field:working_shift.contract.working_shift_rule,sequence:"
 msgid "Sequence"
 msgstr "Secuencia"
-
-msgctxt "field:working_shift.contract.working_shift_rule,start_date:"
-msgid "Start Date"
-msgstr "Fecha inicial"
 
 msgctxt "field:working_shift.contract.working_shift_rule,start_date:"
 msgid "Start Date"
