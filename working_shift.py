@@ -1,6 +1,6 @@
 # The COPYRIGHT file at the top level of this repository contains the full
 # copyright notices and license terms.
-from datetime import datetime, time
+from datetime import datetime, time, timedelta
 from dateutil.relativedelta import relativedelta
 from trytond import backend
 from trytond.model import ModelView, fields
@@ -168,6 +168,9 @@ class WorkingShift(metaclass=PoolMeta):
         else:
             self.estimated_start = self.get_estimated_datetime('start')
             self.estimated_end = self.get_estimated_datetime('end')
+            if self.estimated_end < self.estimated_start:
+                self.estimated_end += timedelta(days=1)
+        return changes
 
     @fields.depends(methods=['on_change_date'])
     def on_change_contract(self, name=None):
@@ -286,7 +289,7 @@ class WorkingShift(metaclass=PoolMeta):
         return self.contract.compute_matching_working_shift_rule(self)
 
     @classmethod
-    def _get_customer_invoice_line(cls, contract_rule, party, quantity):
+    def _get_customer_invoice_line(cls, contract_rule, party, working_shifts):
         pool = Pool()
         InvoiceLine = pool.get('account.invoice.line')
         Tax = pool.get('account.tax')
@@ -307,7 +310,8 @@ class WorkingShift(metaclass=PoolMeta):
             contract_rule.name)
         invoice_line.product = contract_rule.product
         invoice_line.unit_price = contract_rule.list_price
-        invoice_line.quantity = quantity
+        invoice_line.quantity = \
+            cls._get_customer_invoice_line_quantity(contract_rule, working_shifts)
         invoice_line.unit = contract_rule.product.default_uom
         invoice_line.account = contract_rule.product.account_revenue_used
 
@@ -326,6 +330,10 @@ class WorkingShift(metaclass=PoolMeta):
                 invoice_line.taxes.extend(Tax.browse(tax_ids))
 
         return invoice_line
+
+    @classmethod
+    def _get_customer_invoice_line_quantity(cls, contract_rule, working_shifts):
+        return len(working_shifts)
 
     @classmethod
     def _get_invoice(cls, invoice_type, party):
