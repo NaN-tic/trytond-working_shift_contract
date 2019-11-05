@@ -1,6 +1,6 @@
 # The COPYRIGHT file at the top level of this repository contains the full
 # copyright notices and license terms.
-from datetime import datetime, time
+from datetime import datetime, time, timedelta
 from dateutil.relativedelta import relativedelta
 from trytond import backend
 from trytond.model import ModelView, fields
@@ -179,7 +179,8 @@ class WorkingShift:
         else:
             changes['estimated_start'] = self.get_estimated_datetime('start')
             changes['estimated_end'] = self.get_estimated_datetime('end')
-
+            if changes['estimated_end'] < changes['estimated_start']:
+                changes['estimated_end'] += timedelta(days=1)
         return changes
 
     @fields.depends('contract', 'date')
