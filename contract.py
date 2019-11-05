@@ -46,24 +46,6 @@ class Contract(ModelSQL, ModelView):
     end_time = fields.Time('End Time')
     center = fields.Many2One('working_shift.center', 'Center')
 
-    @classmethod
-    def __setup__(cls):
-        super(Contract, cls).__setup__()
-        cls._error_messages.update({
-                'incorrect_start_time':
-                    ('Start time can\'t be less of end time.'),
-                })
-
-    @classmethod
-    def validate(cls, records):
-        super(Contract, cls).validate(records)
-        for record in records:
-            record.check_start_time()
-
-    def check_start_time(self):
-        if self.start_time > self.end_time:
-            self.raise_user_error('incorrect_start_time')
-
     @staticmethod
     def default_invoicing_method():
         return 'working_shift'
@@ -120,18 +102,10 @@ class RuleMixin(ModelSQL, ModelView, MatchMixin):
             ])
     list_price = fields.Numeric('List Price', digits=(16, DIGITS),
         required=True, help="Price per hour to use when invoice to customers.")
-    start_date = fields.Date('Start Date', domain=[
-        If(Eval('start_date') & Eval('end_date'),
-                ('start_date', '<=', Eval('end_date', None)),
-                ()),
-        ], states={
+    start_date = fields.Date('Start Date', states={
             'required': Bool(Eval('end_date')),
-        }, depends=['end_date'])
-    end_date = fields.Date('End Date', domain=[
-        If(Eval('start_date') & Eval('end_date'),
-                ('end_date', '>=', Eval('start_date', None)),
-                ()),
-        ], depends=['start_date'])
+            }, depends=['end_date'])
+    end_date = fields.Date('End Date')
 
     @classmethod
     def __setup__(cls):
