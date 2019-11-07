@@ -87,7 +87,6 @@ Create products::
     >>> template.name = 'Short Module'
     >>> template.default_uom = unit
     >>> template.type = 'service'
-    >>> template.salable = True
     >>> template.list_price = Decimal('300')
     >>> template.cost_price_method = 'fixed'
     >>> template.account_category = account_category
@@ -100,7 +99,6 @@ Create products::
     >>> template.name = 'Large Module'
     >>> template.default_uom = unit
     >>> template.type = 'service'
-    >>> template.salable = True
     >>> template.list_price = Decimal('1000')
     >>> template.cost_price_method = 'fixed'
     >>> template.account_category = account_category
@@ -113,7 +111,6 @@ Create products::
     >>> template.name = 'Intervention'
     >>> template.default_uom = unit
     >>> template.type = 'service'
-    >>> template.salable = True
     >>> template.list_price = Decimal('300')
     >>> template.cost_price_method = 'fixed'
     >>> template.account_category = account_category
@@ -360,7 +357,7 @@ Invoice customers::
 
     >>> invoice_customers = Wizard('working_shift.invoice_customers')
     >>> invoice_customers.form.start_date = previous_month_first
-    >>> invoice_customers.form.end_date = today 
+    >>> invoice_customers.form.end_date = today
     >>> invoice_customers.execute('invoice')
 
 Check working shift invoices::
