@@ -161,7 +161,7 @@ class Field(metaclass=PoolMeta):
         help='If checked, this field will be available in the list of fields '
         'to be configured per Working Shift Contracts.')
 
-    @fields.depends('model')
+    @fields.depends('_parent_model.id', 'model')
     def on_change_with_model_model(self, name=None):
         if self.model:
             return self.model.model
