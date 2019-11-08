@@ -179,7 +179,7 @@ class WorkingShift:
         else:
             changes['estimated_start'] = self.get_estimated_datetime('start')
             changes['estimated_end'] = self.get_estimated_datetime('end')
-            if changes['estimated_end'] < changes['estimated_start']:
+            if changes['estimated_end'] <= changes['estimated_start']:
                 changes['estimated_end'] += timedelta(days=1)
         return changes
 
