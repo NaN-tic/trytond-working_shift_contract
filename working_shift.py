@@ -168,7 +168,7 @@ class WorkingShift(metaclass=PoolMeta):
         else:
             self.estimated_start = self.get_estimated_datetime('start')
             self.estimated_end = self.get_estimated_datetime('end')
-            if self.estimated_end < self.estimated_start:
+            if self.estimated_end <= self.estimated_start:
                 self.estimated_end += timedelta(days=1)
         return changes
 
