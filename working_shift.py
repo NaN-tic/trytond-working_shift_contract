@@ -101,22 +101,9 @@ class WorkingShift:
 
     def check_employee(self):
         pool = Pool()
-        User = pool.get('res.user')
         WorkingShift = pool.get('working_shift')
 
         if self.employee and self.estimated_start and self.estimated_end:
-            user = User(Transaction().user)
-            if user.company.timezone:
-                timezone = pytz.timezone(user.company.timezone)
-                offset = timezone.utcoffset(self.estimated_start)
-                start_w_offset = self.estimated_start + offset
-                offset = timezone.utcoffset(self.estimated_end)
-                end_w_offset = self.estimated_end + offset
-                start_time = start_w_offset.time()
-                end_time = end_w_offset.time()
-            else:
-                start_time = self.estimated_start.time()
-                end_time = self.estimated_end.time()
 
             clause = [
                 ('employee', '=', self.employee),
@@ -124,14 +111,14 @@ class WorkingShift:
                 ('contract.center', '!=', self.contract.center),
                 ['OR',
                     [
-                        ('contract.start_time', '>=', start_time),
-                        ('contract.start_time', '<', end_time),
+                        ('estimated_start', '>=', self.estimated_start),
+                        ('estimated_start', '<', self.estimated_end),
                     ], [
-                        ('contract.start_time', '<=', start_time),
-                        ('contract.end_time', '>=', end_time),
+                        ('estimated_start', '<=', self.estimated_start),
+                        ('estimated_end', '>=', self.estimated_end),
                     ], [
-                        ('contract.end_time', '>', start_time),
-                        ('contract.end_time', '<=', end_time),
+                        ('estimated_end', '>', self.estimated_start),
+                        ('estimated_end', '<=', self.estimated_end),
                     ],
                 ],
             ]
