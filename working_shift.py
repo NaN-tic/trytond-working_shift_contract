@@ -157,7 +157,6 @@ class WorkingShift(metaclass=PoolMeta):
             self.estimated_end = self.get_estimated_datetime('end')
             if self.estimated_end <= self.estimated_start:
                 self.estimated_end += timedelta(days=1)
-        return changes
 
     @fields.depends(methods=['on_change_date'])
     def on_change_contract(self, name=None):
@@ -261,7 +260,7 @@ class WorkingShift(metaclass=PoolMeta):
         inv_lines = []
         for rule, rule_working_shifts in list(rule2working_shifts.items()):
             invoice_line = cls._get_customer_invoice_line(rule, party,
-                len(rule_working_shifts))
+                rule_working_shifts)
             if invoice_line:
                 invoice_line.save()
                 cls.write(rule_working_shifts, {
