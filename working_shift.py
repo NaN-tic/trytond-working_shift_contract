@@ -570,9 +570,9 @@ class WorkingShiftInvoiceCustomers(Wizard):
         WorkingShift = pool.get('working_shift')
 
         shifts = WorkingShift.search([
-                ('date', '>=',
+                ('estimated_start', '>=',
                     datetime.combine(self.dates.start_date, time(0, 0, 0))),
-                ('date', '<',
+                ('estimated_start', '<',
                     datetime.combine(
                         self.dates.end_date + relativedelta(days=1),
                         time(0, 0, 0))),
