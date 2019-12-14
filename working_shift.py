@@ -157,7 +157,6 @@ class WorkingShift(metaclass=PoolMeta):
             self.estimated_end = self.get_estimated_datetime('end')
             if self.estimated_end <= self.estimated_start:
                 self.estimated_end += timedelta(days=1)
-        return changes
 
     @fields.depends(methods=['on_change_date'])
     def on_change_contract(self, name=None):
