@@ -3,7 +3,8 @@
 from trytond.config import config
 from trytond.model import ModelSQL, ModelView, MatchMixin, Unique, fields
 from trytond.pyson import Eval, Id, If, Bool
-from trytond.pool import PoolMeta, Pool
+from trytond.pool import PoolMeta
+
 DIGITS = config.getint('digits', 'unit_price_digits', default=4)
 
 __all__ = ['Contract', 'WorkingShiftRule', 'InterventionRule', 'Field',
