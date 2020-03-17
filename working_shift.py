@@ -397,12 +397,9 @@ class Intervention(metaclass=PoolMeta):
 
     @classmethod
     def __register__(cls, module_name):
-        TableHandler = backend.get('TableHandler')
-
         # Migration from 3.4.0: remove invalid foreign key
-        table = TableHandler(cls, module_name)
+        table = cls.__table_handler__(module_name)
         table.drop_fk('customer_contract_rule')
-
         super(Intervention, cls).__register__(module_name)
 
     @staticmethod
