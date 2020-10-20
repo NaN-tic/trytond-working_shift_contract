@@ -301,20 +301,20 @@ class WorkingShift(metaclass=PoolMeta):
         invoice_line.unit = contract_rule.product.default_uom
         invoice_line.account = contract_rule.product.account_revenue_used
 
-        invoice_line.taxes = []
+        taxes = []
         pattern = invoice_line._get_tax_rule_pattern()
         for tax in contract_rule.product.customer_taxes_used:
             if party.customer_tax_rule:
                 tax_ids = party.customer_tax_rule.apply(tax, pattern)
                 if tax_ids:
-                    invoice_line.taxes.extend(Tax.browse(tax_ids))
+                    taxes.extend(Tax.browse(tax_ids))
                 continue
-            invoice_line.taxes.append(tax)
+            taxes.append(tax)
         if party.customer_tax_rule:
             tax_ids = party.customer_tax_rule.apply(None, pattern)
             if tax_ids:
-                invoice_line.taxes.extend(Tax.browse(tax_ids))
-
+                taxes.extend(Tax.browse(tax_ids))
+        invoice_line.taxes = taxes
         return invoice_line
 
     @classmethod
