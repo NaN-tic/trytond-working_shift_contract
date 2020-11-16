@@ -12,6 +12,7 @@ from trytond.wizard import Wizard, StateAction, StateView, Button
 from trytond.i18n import gettext
 from trytond.exceptions import UserError
 from trytond.modules.working_shift.working_shift import STATES, DEPENDS
+from .contract import INVOICE_METHOD
 from decimal import Decimal
 import pytz
 
@@ -379,21 +380,14 @@ class Intervention(metaclass=PoolMeta):
     contract = fields.Function(fields.Many2One('working_shift.contract',
             'Contract'),
         'on_change_with_contract', searcher='search_contract')
-    invoicing_method = fields.Function(fields.Selection(
-            'get_invoicing_methods', 'Invoicing Method'),
+    invoicing_method = fields.Function(fields.Selection(INVOICE_METHOD,
+            'Invoicing Method'),
         'on_change_with_invoicing_method', searcher='search_invoicing_method')
     customer_invoice_line = fields.Many2One('account.invoice.line',
         'Invoice Line', readonly=True)
     customer_contract_rule = fields.Many2One(
         'working_shift.contract.intervention_rule',
         'Customer Contract Rule', readonly=True)
-
-    @classmethod
-    def __setup__(cls):
-        super(Intervention, cls).__setup__()
-        cls.__rpc__.update({
-                'get_invoicing_methods': RPC(),
-                })
 
     @classmethod
     def __register__(cls, module_name):
@@ -404,12 +398,6 @@ class Intervention(metaclass=PoolMeta):
         table.drop_fk('customer_contract_rule')
 
         super(Intervention, cls).__register__(module_name)
-
-    @staticmethod
-    def get_invoicing_methods():
-        pool = Pool()
-        Contract = pool.get('working_shift.contract')
-        return Contract.invoicing_method.selection
 
     @fields.depends('shift', '_parent_shift.contract')
     def on_change_with_contract(self, name=None):
