@@ -10,16 +10,19 @@ DIGITS = config.getint('digits', 'unit_price_digits', default=4)
 __all__ = ['Contract', 'WorkingShiftRule', 'InterventionRule', 'Field',
     'ContractField']
 
+INVOICE_METHOD = [
+    ('working_shift', 'Working Shifts'),
+    ('intervention', 'Interventions'),
+    ]
+
 
 class Contract(ModelSQL, ModelView):
     'Working Shift Contract'
     __name__ = 'working_shift.contract'
     name = fields.Char('Name', required=True)
     party = fields.Many2One('party.party', 'Party', required=True)
-    invoicing_method = fields.Selection([
-            ('working_shift', 'Working Shifts'),
-            ('intervention', 'Interventions'),
-            ], 'Invoicing Method', required=True)
+    invoicing_method = fields.Selection(INVOICE_METHOD, 'Invoicing Method',
+        required=True)
     requires_interventions = fields.Boolean('Requires Interventions', domain=[
             If(Eval('invoicing_method') == 'intervention',
                 ('requires_interventions', '=', True),
