@@ -354,7 +354,7 @@ class WorkingShift(metaclass=PoolMeta):
             journal=journal,
             party=party,
             invoice_address=invoice_address,
-            account=party.account_receivable,
+            account=party.account_receivable_used,
             payment_term=payment_term,
             )
         if hasattr(Invoice, 'payment_type'):
