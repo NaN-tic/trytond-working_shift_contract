@@ -1,8 +1,5 @@
 # The COPYRIGHT file at the top level of this repository contains the full
-
 from trytond.model import ModelSQL, ModelView, fields
-
-__all__ = ['Center']
 
 
 class Center(ModelSQL, ModelView):

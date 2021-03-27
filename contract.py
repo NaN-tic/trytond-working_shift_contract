@@ -7,9 +7,6 @@ from trytond.pool import PoolMeta
 
 DIGITS = config.getint('digits', 'unit_price_digits', default=4)
 
-__all__ = ['Contract', 'WorkingShiftRule', 'InterventionRule', 'Field',
-    'ContractField']
-
 INVOICE_METHOD = [
     ('working_shift', 'Working Shifts'),
     ('intervention', 'Interventions'),

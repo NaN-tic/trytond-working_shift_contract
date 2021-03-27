@@ -2,11 +2,9 @@
 # copyright notices and license terms.
 from datetime import datetime, time, timedelta
 from dateutil.relativedelta import relativedelta
-from trytond import backend
 from trytond.model import ModelView, fields
 from trytond.pool import Pool, PoolMeta
 from trytond.pyson import Eval, Or, Bool
-from trytond.rpc import RPC
 from trytond.transaction import Transaction
 from trytond.wizard import Wizard, StateAction, StateView, Button
 from trytond.i18n import gettext
@@ -15,9 +13,6 @@ from trytond.modules.working_shift.working_shift import STATES, DEPENDS
 from .contract import INVOICE_METHOD
 from decimal import Decimal
 import pytz
-
-__all__ = ['WorkingShift', 'Intervention',
-    'WorkingShiftInvoiceCustomersDates', 'WorkingShiftInvoiceCustomers']
 
 
 class WorkingShift(metaclass=PoolMeta):
