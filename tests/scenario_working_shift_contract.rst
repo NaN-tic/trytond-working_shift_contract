@@ -155,10 +155,10 @@ Configure sequences::
     >>> Sequence = Model.get('ir.sequence')
     >>> working_shift_config = WorkingShiftConfig(1)
     >>> intervention_sequence, = Sequence.find([
-    ...     ('code', '=', 'working_shift.intervention')])
+    ...     ('sequence_type.name', '=', 'Working Shift Intervention')])
     >>> working_shift_config.intervention_sequence = intervention_sequence
     >>> working_shift_sequence, = Sequence.find([
-    ...     ('code', '=', 'working_shift')])
+    ...     ('sequence_type.name', '=', 'Working Shift')])
     >>> working_shift_config.working_shift_sequence = working_shift_sequence
     >>> working_shift_config.save()
 
