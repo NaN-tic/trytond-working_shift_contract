@@ -16,10 +16,6 @@ Imports::
     ...     create_chart, get_accounts, create_tax
     >>> from trytond.modules.account_invoice.tests.tools import \
     ...     set_fiscalyear_invoice_sequences, create_payment_term
-    >>> today = datetime.date.today()
-    >>> now = datetime.datetime.now()
-    >>> previous_month_first = (today - relativedelta(months=1)).replace(day=1)
-    >>> previous_month_last = today.replace(day=1) - relativedelta(days=1)
 
 Activate working_shift_contract::
 
@@ -163,6 +159,7 @@ Configure sequences::
     >>> working_shift_config.save()
 
 Create centers::
+
     >>> Center = Model.get('working_shift.center')
     >>> center1 = Center()
     >>> center1.name = 'Center 1'
@@ -172,6 +169,13 @@ Create centers::
     >>> center2.name = 'Center 2'
     >>> center2.color = 'yellow'
     >>> center2.save()
+
+Compute dates::
+
+    >>> today = datetime.date.today()
+    >>> now = datetime.datetime.now()
+    >>> previous_month_first = (today - relativedelta(months=1)).replace(day=1)
+    >>> previous_month_last = today.replace(day=1) - relativedelta(days=1)
 
 Create contracts::
 
