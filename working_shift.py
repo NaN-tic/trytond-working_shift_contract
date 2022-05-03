@@ -57,7 +57,7 @@ class WorkingShift(metaclass=PoolMeta):
             if not cls.interventions.states:
                 cls.interventions.states = {}
             cls.interventions.states['required'] = interventions_states_clause
-        cls.interventions.depends.append('contract')
+        cls.interventions.depends.add('contract')
 
         if cls.start.states:
             if cls.start.states.get('readonly'):
