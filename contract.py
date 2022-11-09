@@ -81,7 +81,7 @@ class Contract(ModelSQL, ModelView):
 class RuleMixin(ModelSQL, ModelView, MatchMixin):
     name = fields.Char('Name', required=True)
     contract = fields.Many2One('working_shift.contract', 'Contract',
-        required=True, select=True, ondelete='CASCADE')
+        required=True, ondelete='CASCADE')
     sequence = fields.Integer('Sequence')
     # Matching
     hours = fields.Float('Hours', domain=[
@@ -172,7 +172,7 @@ class ContractField(ModelSQL, ModelView):
     'Working Shift Contract Field'
     __name__ = 'working_shift.contract.field'
     contract = fields.Many2One('working_shift.contract', 'Contract',
-        required=True, select=True, ondelete='CASCADE')
+        required=True, ondelete='CASCADE')
     field = fields.Many2One('ir.model.field', 'Field', required=True,
         domain=[
             ('model.model', '=', 'working_shift.intervention'),
