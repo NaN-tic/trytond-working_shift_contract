@@ -2,64 +2,6 @@
 msgid ""
 msgstr "Content-Type: text/plain; charset=utf-8\n"
 
-msgctxt "error:working_shift.contract.field:"
-msgid ""
-"The Contract + Field tuple of the Working Shift Contract Field must be "
-"unique."
-msgstr ""
-"La pareja Contrato y Campo de los campos de contrato de turnos de trabajo "
-"debe ser única."
-
-msgctxt "error:working_shift.contract:"
-msgid "Start time can't be less of end time."
-msgstr "La hora de inicio no puede ser menor que la hora de finalización."
-
-msgctxt "error:working_shift.intervention:"
-msgid ""
-"The field \"%(field)s\" of Working Shift Intervention \"%(intervention)s\" "
-"is required because of the shift's contract."
-msgstr ""
-"El campo \"%(field)s\" de la intervención \"%(intervention)s\" es requerido "
-"debido al contrato del turno de trabajo."
-
-msgctxt "error:working_shift.intervention:"
-msgid ""
-"The product \"%s\" used to invoice interventions doesn't have Revenue "
-"Account."
-msgstr ""
-"El producto \"%s\" usado para facturar intervenciones no tiene cuenta de "
-"ingresos."
-
-msgctxt "error:working_shift:"
-msgid ""
-"The product \"%s\" used to invoice working shifts doesn't have Revenue "
-"Account."
-msgstr ""
-"El producto \"%s\" usado para facturar turnos de trabajo no tiene cuenta de "
-"ingresos."
-
-msgctxt "error:working_shift:"
-msgid ""
-"You can't not assign the employee \"%(employee)s\" to the working shift "
-"\"%(working_shift)s\" because he is already assigned to the working shift "
-"\"%(conflictive_working_shift)s\" with the same time interval."
-msgstr ""
-"No puedes asignar el \"%(employee)s\" al turno de trabajo "
-"\"%(working_shift)s\"  porqué este ya está assignado al turno de trabajo "
-"\"%(conflictive_working_shift)s\" con el mismo intervalo de tiempo."
-
-msgctxt "error:working_shift:"
-msgid "You cannot cancel the working shift \"%s\" because it is already invoiced."
-msgstr "No puede cancelar el turno de trabajo \"%s\" porque ya está facturado."
-
-msgctxt "error:working_shift:"
-msgid ""
-"You cannot cancel the working shift \"%s\" because some of its interventions"
-" are already invoiced."
-msgstr ""
-"No puede cancelar el turno de trabajo \"%s\" porque alguna de sus "
-"intervenciones ya están facturadas."
-
 msgctxt "field:account.invoice.line,interventions:"
 msgid "Interventions"
 msgstr "Intervenciones"
@@ -67,38 +9,6 @@ msgstr "Intervenciones"
 msgctxt "field:account.invoice.line,working_shifts:"
 msgid "Working Shifts"
 msgstr "Turnos de trabajo"
-
-msgctxt "field:working_shift.center,color:"
-msgid "Color"
-msgstr "Color"
-
-msgctxt "field:working_shift.center,create_date:"
-msgid "Create Date"
-msgstr "Fecha de creación"
-
-msgctxt "field:working_shift.center,create_uid:"
-msgid "Create User"
-msgstr "Usuario de creación"
-
-msgctxt "field:working_shift.center,id:"
-msgid "ID"
-msgstr "ID"
-
-msgctxt "field:working_shift.center,name:"
-msgid "Name"
-msgstr "Nombre"
-
-msgctxt "field:working_shift.center,rec_name:"
-msgid "Name"
-msgstr "Nombre"
-
-msgctxt "field:working_shift.center,write_date:"
-msgid "Write Date"
-msgstr "Fecha de modificación"
-
-msgctxt "field:working_shift.center,write_uid:"
-msgid "Write User"
-msgstr "Usuario de modificación"
 
 msgctxt "field:ir.model.field,model_model:"
 msgid "Model Name"
@@ -125,40 +35,36 @@ msgid "Date"
 msgstr "Fecha"
 
 msgctxt "field:working_shift,estimated_end:"
-msgid "Estimated End Time"
-msgstr "Hora de fin teórica"
+msgid "Estimated End"
+msgstr "Fin estimado"
 
 msgctxt "field:working_shift,estimated_hours:"
 msgid "Estimated Hours"
 msgstr "Horas estimadas"
 
 msgctxt "field:working_shift,estimated_start:"
-msgid "Estimated Start Time"
-msgstr "Hora de inicio teórica"
+msgid "Estimated Start"
+msgstr "Inicio estimado"
 
 msgctxt "field:working_shift,requires_interventions:"
 msgid "Requires Interventions"
 msgstr "Requiere intervenciones"
 
+msgctxt "field:working_shift.center,color:"
+msgid "Color"
+msgstr "Color"
+
+msgctxt "field:working_shift.center,name:"
+msgid "Name"
+msgstr "Nombre"
+
 msgctxt "field:working_shift.contract,center:"
 msgid "Center"
 msgstr "Centro"
 
-msgctxt "field:working_shift.contract,create_date:"
-msgid "Create Date"
-msgstr "Fecha creación"
-
-msgctxt "field:working_shift.contract,create_uid:"
-msgid "Create User"
-msgstr "Usuario creación"
-
 msgctxt "field:working_shift.contract,end_time:"
 msgid "End Time"
 msgstr "Hora fin"
-
-msgctxt "field:working_shift.contract,id:"
-msgid "ID"
-msgstr "Identificador"
 
 msgctxt "field:working_shift.contract,intervention_fields:"
 msgid "Intervention Fields"
@@ -180,10 +86,6 @@ msgctxt "field:working_shift.contract,party:"
 msgid "Party"
 msgstr "Tercero"
 
-msgctxt "field:working_shift.contract,rec_name:"
-msgid "Name"
-msgstr "Nombre"
-
 msgctxt "field:working_shift.contract,requires_interventions:"
 msgid "Requires Interventions"
 msgstr "Requiere intervenciones"
@@ -196,65 +98,21 @@ msgctxt "field:working_shift.contract,working_shift_rules:"
 msgid "Working Shift Rules"
 msgstr "Reglas turno de trabajo"
 
-msgctxt "field:working_shift.contract,write_date:"
-msgid "Write Date"
-msgstr "Fecha modificación"
-
-msgctxt "field:working_shift.contract,write_uid:"
-msgid "Write User"
-msgstr "Usuario modificación"
-
 msgctxt "field:working_shift.contract.field,contract:"
 msgid "Contract"
 msgstr "Contrato"
-
-msgctxt "field:working_shift.contract.field,create_date:"
-msgid "Create Date"
-msgstr "Fecha creación"
-
-msgctxt "field:working_shift.contract.field,create_uid:"
-msgid "Create User"
-msgstr "Usuario creación"
 
 msgctxt "field:working_shift.contract.field,field:"
 msgid "Field"
 msgstr "Campo"
 
-msgctxt "field:working_shift.contract.field,id:"
-msgid "ID"
-msgstr "Identificador"
-
-msgctxt "field:working_shift.contract.field,rec_name:"
-msgid "Name"
-msgstr "Nombre"
-
 msgctxt "field:working_shift.contract.field,required:"
 msgid "Required"
 msgstr "Requerido"
 
-msgctxt "field:working_shift.contract.field,write_date:"
-msgid "Write Date"
-msgstr "Fecha modificación"
-
-msgctxt "field:working_shift.contract.field,write_uid:"
-msgid "Write User"
-msgstr "Usuario modificación"
-
 msgctxt "field:working_shift.contract.intervention_rule,contract:"
 msgid "Contract"
 msgstr "Contrato"
-
-msgctxt "field:working_shift.contract.intervention_rule,create_date:"
-msgid "Create Date"
-msgstr "Fecha creación"
-
-msgctxt "field:working_shift.contract.intervention_rule,create_uid:"
-msgid "Create User"
-msgstr "Usuario creación"
-
-msgctxt "field:working_shift.contract.intervention_rule,end_date:"
-msgid "End Date"
-msgstr "Fecha final"
 
 msgctxt "field:working_shift.contract.intervention_rule,end_date:"
 msgid "End Date"
@@ -263,10 +121,6 @@ msgstr "Fecha final"
 msgctxt "field:working_shift.contract.intervention_rule,hours:"
 msgid "Hours"
 msgstr "Horas"
-
-msgctxt "field:working_shift.contract.intervention_rule,id:"
-msgid "ID"
-msgstr "Identificador"
 
 msgctxt "field:working_shift.contract.intervention_rule,list_price:"
 msgid "List Price"
@@ -280,10 +134,6 @@ msgctxt "field:working_shift.contract.intervention_rule,product:"
 msgid "Product"
 msgstr "Producto"
 
-msgctxt "field:working_shift.contract.intervention_rule,rec_name:"
-msgid "Name"
-msgstr "Nombre"
-
 msgctxt "field:working_shift.contract.intervention_rule,sequence:"
 msgid "Sequence"
 msgstr "Secuencia"
@@ -292,33 +142,9 @@ msgctxt "field:working_shift.contract.intervention_rule,start_date:"
 msgid "Start Date"
 msgstr "Fecha inicial"
 
-msgctxt "field:working_shift.contract.intervention_rule,start_date:"
-msgid "Start Date"
-msgstr "Fecha inicial"
-
-msgctxt "field:working_shift.contract.intervention_rule,write_date:"
-msgid "Write Date"
-msgstr "Fecha modificación"
-
-msgctxt "field:working_shift.contract.intervention_rule,write_uid:"
-msgid "Write User"
-msgstr "Usuario modificación"
-
 msgctxt "field:working_shift.contract.working_shift_rule,contract:"
 msgid "Contract"
 msgstr "Contrato"
-
-msgctxt "field:working_shift.contract.working_shift_rule,create_date:"
-msgid "Create Date"
-msgstr "Fecha creación"
-
-msgctxt "field:working_shift.contract.working_shift_rule,create_uid:"
-msgid "Create User"
-msgstr "Usuario creación"
-
-msgctxt "field:working_shift.contract.working_shift_rule,end_date:"
-msgid "End Date"
-msgstr "Fecha final"
 
 msgctxt "field:working_shift.contract.working_shift_rule,end_date:"
 msgid "End Date"
@@ -327,10 +153,6 @@ msgstr "Fecha final"
 msgctxt "field:working_shift.contract.working_shift_rule,hours:"
 msgid "Hours"
 msgstr "Horas"
-
-msgctxt "field:working_shift.contract.working_shift_rule,id:"
-msgid "ID"
-msgstr "Identificador"
 
 msgctxt "field:working_shift.contract.working_shift_rule,list_price:"
 msgid "List Price"
@@ -344,10 +166,6 @@ msgctxt "field:working_shift.contract.working_shift_rule,product:"
 msgid "Product"
 msgstr "Producto"
 
-msgctxt "field:working_shift.contract.working_shift_rule,rec_name:"
-msgid "Name"
-msgstr "Nombre"
-
 msgctxt "field:working_shift.contract.working_shift_rule,sequence:"
 msgid "Sequence"
 msgstr "Secuencia"
@@ -355,18 +173,6 @@ msgstr "Secuencia"
 msgctxt "field:working_shift.contract.working_shift_rule,start_date:"
 msgid "Start Date"
 msgstr "Fecha inicial"
-
-msgctxt "field:working_shift.contract.working_shift_rule,start_date:"
-msgid "Start Date"
-msgstr "Fecha inicial"
-
-msgctxt "field:working_shift.contract.working_shift_rule,write_date:"
-msgid "Write Date"
-msgstr "Fecha modificación"
-
-msgctxt "field:working_shift.contract.working_shift_rule,write_uid:"
-msgid "Write User"
-msgstr "Usuario modificación"
 
 msgctxt "field:working_shift.intervention,contract:"
 msgid "Contract"
@@ -387,10 +193,6 @@ msgstr "Método de facturación"
 msgctxt "field:working_shift.invoice_customers.dates,end_date:"
 msgid "End Date"
 msgstr "Fecha final"
-
-msgctxt "field:working_shift.invoice_customers.dates,id:"
-msgid "ID"
-msgstr "Identificador"
 
 msgctxt "field:working_shift.invoice_customers.dates,start_date:"
 msgid "Start Date"
@@ -436,10 +238,6 @@ msgctxt "help:working_shift.contract.working_shift_rule,list_price:"
 msgid "Price per hour to use when invoice to customers."
 msgstr "Precio por hora que se usará al facturar a clientes."
 
-msgctxt "model:working_shift.center,name:"
-msgid "Center"
-msgstr "Centro"
-
 msgctxt "model:ir.action,name:"
 msgid "Working Shift Calendar"
 msgstr "Agenda de Turnos de trabajo"
@@ -455,6 +253,56 @@ msgstr "Contratos de cliente"
 msgctxt "model:ir.action,name:act_invoice_customers"
 msgid "Invoice Customers"
 msgstr "Facturar clientes"
+
+msgctxt "model:ir.action,name:act_working_shift_calendar"
+msgid "Working Shift Calendar"
+msgstr "Agenda de Turnos de trabajo"
+
+msgctxt "model:ir.message,text:employee_also_in_working_shift"
+msgid ""
+"You can't not assign the employee \"%(employee)s\" to the working shift "
+"\"%(working_shift)s\" because he is already assigned to the working shift "
+"\"%(conflictive_working_shift)s\" with the same time interval."
+msgstr ""
+"No se puede no asignar al empleado \"%(employee)s\" al turno de trabajo "
+"\"%(working_shift)s\" porque ya está asignado al turno de trabajo "
+"\"%(conflictive_working_shift)s\" con el mismo intervalo de tiempo."
+
+msgctxt "model:ir.message,text:incorrect_start_time"
+msgid "Start time can't be less of end time."
+msgstr "La hora de inicio no puede ser menos que la hora de finalización."
+
+msgctxt "model:ir.message,text:invoiced_working_shift"
+msgid ""
+"You cannot cancel the working shift \"%(ws)s\" because it is already "
+"invoiced."
+msgstr ""
+"No se puede cancelar el turno de trabajo \"%(ws)s\" porque ya está "
+"facturado."
+
+msgctxt "model:ir.message,text:invoiced_working_shift_interventions"
+msgid ""
+"You cannot cancel the working shift \"%(ws)s\" because some of its "
+"interventions are already invoiced"
+msgstr ""
+"No se puede cancelar el turno de trabajo \"%(ws)s\" porque algunas de sus "
+"intervenciones ya están facturadas"
+
+msgctxt "model:ir.message,text:missing_account_revenue"
+msgid ""
+"The product \"%(product)s\" used to invoice working shifts doesn't have "
+"Revenue Account."
+msgstr ""
+"El producto \"%(product)s\" utilizado para facturar turnos de trabajo no "
+"tiene Cuenta de Ingresos."
+
+msgctxt "model:ir.message,text:missing_required_field_contract"
+msgid ""
+"The field \"%(field)s\" of Working Shift Intervention \"%(intervention)s\" "
+"is required because of the shift\\'s contract."
+msgstr ""
+"El campo \"%(field)s\" de Intervención en Turno de Trabajo "
+"\"%(intervention)s\" es requerido por contrato de turno."
 
 msgctxt "model:ir.ui.menu,name:"
 msgid "Working Shift Calendar"
@@ -476,7 +324,11 @@ msgctxt "model:ir.ui.menu,name:menu_invoice_customers"
 msgid "Invoice Customers"
 msgstr "Facturar clientes"
 
-msgctxt "model:res.group,name:group_center"
+msgctxt "model:ir.ui.menu,name:menu_working_shift_calendar"
+msgid "Working Shift Calendar"
+msgstr "Agenda de Turnos de trabajo"
+
+msgctxt "model:res.group,name:"
 msgid "Center"
 msgstr "Centro"
 
@@ -487,6 +339,10 @@ msgstr "Administración de centros"
 msgctxt "model:res.group,name:group_working_shift_contract"
 msgid "Working Shifts Contracts"
 msgstr "Contratos turnos de trabajo"
+
+msgctxt "model:working_shift.center,name:"
+msgid "Center"
+msgstr "Centro"
 
 msgctxt "model:working_shift.contract,name:"
 msgid "Working Shift Contract"
@@ -544,6 +400,14 @@ msgctxt "selection:working_shift.contract,invoicing_method:"
 msgid "Working Shifts"
 msgstr "Turnos de trabajo"
 
+msgctxt "selection:working_shift.intervention,invoicing_method:"
+msgid "Interventions"
+msgstr "Intervenciones"
+
+msgctxt "selection:working_shift.intervention,invoicing_method:"
+msgid "Working Shifts"
+msgstr "Turnos de trabajo"
+
 msgctxt "view:account.invoice.line:"
 msgid "Working Shifts & Interventions"
 msgstr "Turnos de trabajo & Intervenciones"
@@ -565,14 +429,6 @@ msgid "Conditions"
 msgstr "Condiciones"
 
 msgctxt "view:working_shift.contract.intervention_rule:"
-msgid "Contract Intervention Rule"
-msgstr "Regla contrato por intervenciones"
-
-msgctxt "view:working_shift.contract.intervention_rule:"
-msgid "Contract Intervention Rules"
-msgstr "Reglas contrato por intervenciones"
-
-msgctxt "view:working_shift.contract.intervention_rule:"
 msgid "Result"
 msgstr "Resultado"
 
@@ -581,24 +437,8 @@ msgid "Conditions"
 msgstr "Condiciones"
 
 msgctxt "view:working_shift.contract.working_shift_rule:"
-msgid "Contract Working Shift Rule"
-msgstr "Regla contrato por turnos"
-
-msgctxt "view:working_shift.contract.working_shift_rule:"
-msgid "Contract Working Shift Rules"
-msgstr "Reglas contrato por turnos"
-
-msgctxt "view:working_shift.contract.working_shift_rule:"
 msgid "Result"
 msgstr "Resultado"
-
-msgctxt "view:working_shift.contract:"
-msgid "Customer Contract"
-msgstr "Contrato de cliente"
-
-msgctxt "view:working_shift.contract:"
-msgid "Customer Contracts"
-msgstr "Contratos de cliente"
 
 msgctxt "view:working_shift.contract:"
 msgid "Rules"
@@ -607,10 +447,6 @@ msgstr "Reglas"
 msgctxt "view:working_shift.invoice_customers.dates:"
 msgid "Create customer invoices for working shifts in this period"
 msgstr "Crear facturas de cliente para los turnos de trabajo de este período"
-
-msgctxt "view:working_shift.invoice_customers.dates:"
-msgid "Invoice Working Shift Customers"
-msgstr "Facturar turnos de trabajo a clientes"
 
 msgctxt "view:working_shift:"
 msgid "Working Shifts"
