@@ -9,7 +9,7 @@ from trytond.transaction import Transaction
 from trytond.wizard import Wizard, StateAction, StateView, Button
 from trytond.i18n import gettext
 from trytond.exceptions import UserError
-from trytond.modules.working_shift.working_shift import STATES, DEPENDS
+from trytond.modules.working_shift.working_shift import STATES
 from .contract import INVOICE_METHOD
 from decimal import Decimal
 import pytz
@@ -18,7 +18,7 @@ import pytz
 class WorkingShift(metaclass=PoolMeta):
     __name__ = 'working_shift'
     contract = fields.Many2One('working_shift.contract', 'Contract',
-        required=True, states=STATES, depends=DEPENDS)
+        required=True, states=STATES)
     requires_interventions = fields.Function(fields.Boolean(
             'Requires Interventions'),
         'on_change_with_requires_interventions')
@@ -29,7 +29,7 @@ class WorkingShift(metaclass=PoolMeta):
         'Customer Contract Rule', readonly=True)
     date = fields.Date('Date', required=True)
     estimated_start = fields.DateTime('Estimated Start', required=True,
-        states=STATES, depends=DEPENDS)
+        states=STATES)
     estimated_end = fields.DateTime('Estimated End',
         domain=[
             ['OR',
@@ -39,7 +39,7 @@ class WorkingShift(metaclass=PoolMeta):
             ],
         states={
             'required': Eval('state').in_(['confirmed', 'done']),
-            }, depends=(DEPENDS + ['estimated_start']))
+            }, depends=['estimated_start'])
     estimated_hours = fields.Function(fields.Numeric('Estimated Hours',
             digits=(16, 2)), 'on_change_with_estimated_hours')
 
@@ -518,7 +518,7 @@ class WorkingShiftInvoiceCustomersDates(ModelView):
     start_date = fields.Date('Start Date', required=True)
     end_date = fields.Date('End Date', required=True, domain=[
             ('end_date', '>=', Eval('start_date')),
-            ], depends=['start_date'])
+            ])
 
 
 class WorkingShiftInvoiceCustomers(Wizard):

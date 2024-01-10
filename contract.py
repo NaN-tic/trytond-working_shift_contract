@@ -27,7 +27,7 @@ class Contract(ModelSQL, ModelView):
             ],
         states={
             'readonly': Eval('invoicing_method') == 'intervention',
-            }, depends=['invoicing_method'],
+            },
         help='A Working Shift in a contract which requires interventions will '
         'show the user a warning if he closes it without creating any '
         'intervention.')
@@ -158,7 +158,7 @@ class Field(metaclass=PoolMeta):
     working_shift_contract_managed = fields.Boolean('Contract Managed',
         states={
             'invisible': Eval('model_model') != 'working_shift.intervention',
-            }, depends=['model_model'],
+            },
         help='If checked, this field will be available in the list of fields '
         'to be configured per Working Shift Contracts.')
 
