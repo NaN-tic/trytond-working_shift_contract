@@ -102,7 +102,7 @@ class RuleMixin(ModelSQL, ModelView, MatchMixin):
         required=True, help="Price per hour to use when invoice to customers.")
     start_date = fields.Date('Start Date', states={
             'required': Bool(Eval('end_date')),
-            }, depends=['end_date'])
+            })
     end_date = fields.Date('End Date')
 
     @classmethod
