@@ -36,7 +36,7 @@
             <field name="act_window" ref="act_center"/>
         </record>
         <record model="ir.model.access" id="access_center">
-            <field name="model" search="[('model', '=', 'working_shift.center')]"/>
+            <field name="model">working_shift.center</field>
             <field name="perm_read" eval="True"/>
             <field name="perm_write" eval="False"/>
             <field name="perm_create" eval="False"/>
@@ -44,7 +44,7 @@
         </record>
 
         <record model="ir.model.access" id="access_center_admin">
-            <field name="model" search="[('model', '=', 'working_shift.center')]"/>
+            <field name="model">working_shift.center</field>
             <field name="group" ref="group_center_admin"/>
             <field name="perm_read" eval="True"/>
             <field name="perm_write" eval="True"/>
