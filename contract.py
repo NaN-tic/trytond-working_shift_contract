@@ -153,19 +153,12 @@ class InterventionRule(RuleMixin):
 
 class Field(metaclass=PoolMeta):
     __name__ = 'ir.model.field'
-    model_model = fields.Function(fields.Char('Model Name'),
-        'on_change_with_model_model')
     working_shift_contract_managed = fields.Boolean('Contract Managed',
         states={
-            'invisible': Eval('model_model') != 'working_shift.intervention',
+            'invisible': Eval('model') != 'working_shift.intervention',
             },
         help='If checked, this field will be available in the list of fields '
         'to be configured per Working Shift Contracts.')
-
-    @fields.depends('_parent_model.id', 'model')
-    def on_change_with_model_model(self, name=None):
-        if self.model:
-            return self.model.model
 
 
 class ContractField(ModelSQL, ModelView):
