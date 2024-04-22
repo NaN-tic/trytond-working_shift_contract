@@ -2,7 +2,7 @@
 <!-- The COPYRIGHT file at the top level of this repository contains the full
      copyright notices and license terms. -->
 <data>
-    <xpath expr="/tree/field[@name='module']" position="after">
+    <xpath expr="/tree/field[@name='module_ref']" position="after">
         <field name="working_shift_contract_managed"/>
     </xpath>
 </data>
