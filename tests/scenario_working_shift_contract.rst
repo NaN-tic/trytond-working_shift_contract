@@ -391,8 +391,7 @@ Check working shift invoices::
     ...     for i in s.interventions]
     [True, True, True]
     >>> shift4_intervention = shift4.interventions[0]
-    >>> shift5_intervention0 = shift5.interventions[0]
-    >>> shift5_intervention1 = shift5.interventions[1]
+    >>> shift5_intervention0, shift5_intervention1 = sorted(shift5.interventions, key=lambda x: x.id)
     >>> shift4_intervention.customer_invoice_line.invoice.party == customer2
     True
     >>> shift4_intervention.customer_invoice_line.product == service_intervention
@@ -401,15 +400,15 @@ Check working shift invoices::
     2.0
     >>> shift4_intervention.customer_invoice_line.amount
     Decimal('600.00')
-    >>> shift4_intervention.customer_invoice_line == shift5_intervention0.customer_invoice_line
+    >>> shift4_intervention.customer_invoice_line == shift5_intervention1.customer_invoice_line
     True
-    >>> shift5_intervention1.customer_invoice_line.invoice.party == customer1
+    >>> shift5_intervention0.customer_invoice_line.invoice.party == customer1
     True
-    >>> shift5_intervention1.customer_invoice_line.product == service_intervention
+    >>> shift5_intervention0.customer_invoice_line.product == service_intervention
     True
-    >>> shift5_intervention1.customer_invoice_line.quantity
+    >>> shift5_intervention0.customer_invoice_line.quantity
     1.0
-    >>> shift5_intervention1.customer_invoice_line.amount
+    >>> shift5_intervention0.customer_invoice_line.amount
     Decimal('300.00')
 
     >>> customer1_invoice, = Invoice.find([('party', '=', customer1.id)])
