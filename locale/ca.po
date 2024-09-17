@@ -264,7 +264,7 @@ msgid ""
 "\"%(working_shift)s\" because he is already assigned to the working shift "
 "\"%(conflictive_working_shift)s\" with the same time interval."
 msgstr ""
-"No podeu no assignar l'empleat \"%(empleat)s\" al torn de treball "
+"No podeu no assignar l'empleat \"%(employee)s\" al torn de treball "
 "\"%(working_shift)s\" perquè ja està assignat al torn de treball "
 "\"%(conflictive_working_shift)s\" amb el mateix interval de temps."
 
