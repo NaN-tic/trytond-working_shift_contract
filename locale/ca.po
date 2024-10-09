@@ -238,10 +238,6 @@ msgctxt "help:working_shift.contract.working_shift_rule,list_price:"
 msgid "Price per hour to use when invoice to customers."
 msgstr "Preu per hora que s'utilitzarà when es facturi als clients"
 
-msgctxt "model:ir.action,name:"
-msgid "Working Shift Calendar"
-msgstr "Agenda de Torns de treball"
-
 msgctxt "model:ir.action,name:act_center"
 msgid "Centers"
 msgstr "Centres"
