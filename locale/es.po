@@ -300,10 +300,6 @@ msgstr ""
 "El campo \"%(field)s\" de Intervención en Turno de Trabajo "
 "\"%(intervention)s\" es requerido por contrato de turno."
 
-msgctxt "model:ir.ui.menu,name:"
-msgid "Working Shift Calendar"
-msgstr "Agenda de Turnos de trabajo"
-
 msgctxt "model:ir.ui.menu,name:menu_center"
 msgid "Centers"
 msgstr "Centros"
@@ -323,10 +319,6 @@ msgstr "Facturar clientes"
 msgctxt "model:ir.ui.menu,name:menu_working_shift_calendar"
 msgid "Working Shift Calendar"
 msgstr "Agenda de Turnos de trabajo"
-
-msgctxt "model:res.group,name:"
-msgid "Center"
-msgstr "Centro"
 
 msgctxt "model:res.group,name:group_center_admin"
 msgid "Centers Administration"

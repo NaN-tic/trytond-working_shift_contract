@@ -299,10 +299,6 @@ msgstr ""
 "El camp \"%(field)s\" de la intervenció del torn de treball "
 "\"%(intervention)s\" és obligatori a causa del contracte del torn."
 
-msgctxt "model:ir.ui.menu,name:"
-msgid "Working Shift Calendar"
-msgstr "Agenda de Torns de treball"
-
 msgctxt "model:ir.ui.menu,name:menu_center"
 msgid "Centers"
 msgstr "Centres"
@@ -322,10 +318,6 @@ msgstr "Factura clients"
 msgctxt "model:ir.ui.menu,name:menu_working_shift_calendar"
 msgid "Working Shift Calendar"
 msgstr "Agenda de Torns de treball"
-
-msgctxt "model:res.group,name:"
-msgid "Center"
-msgstr "Centre"
 
 msgctxt "model:res.group,name:group_center_admin"
 msgid "Centers Administration"
