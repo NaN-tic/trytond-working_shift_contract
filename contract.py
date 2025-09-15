@@ -111,6 +111,7 @@ class RuleMixin(ModelSQL, ModelView, MatchMixin):
         cls._order = [
             ('contract', 'ASC'),
             ('sequence', 'ASC'),
+            ('id', 'DESC'),
             ]
 
     @staticmethod
