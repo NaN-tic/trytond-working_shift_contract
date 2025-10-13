@@ -122,7 +122,7 @@ class RuleMixin(ModelSQL, ModelView, MatchMixin):
     @fields.depends('product')
     def on_change_product(self):
         if self.product:
-            self.list_price = self.product.list_price
+            self.list_price = self.product.list_price_used
 
     def match(self, pattern):
         if 'hours' in pattern and self.hours:
