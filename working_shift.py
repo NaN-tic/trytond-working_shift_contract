@@ -9,6 +9,7 @@ from trytond.transaction import Transaction
 from trytond.wizard import Wizard, StateAction, StateView, Button
 from trytond.i18n import gettext
 from trytond.exceptions import UserError
+from trytond.model.exceptions import ValidationError
 from trytond.modules.working_shift.working_shift import STATES
 from .contract import INVOICE_METHOD
 from decimal import Decimal
@@ -111,7 +112,7 @@ class WorkingShift(metaclass=PoolMeta):
             if conflicts:
                 module = 'working_shift_contract'
                 msg_id = 'employee_also_in_working_shift'
-                raise UserError(gettext(
+                raise ValidationError(gettext(
                         '{}.{}'.format(module, msg_id),
                         employee=self.employee.rec_name,
                         working_shift=self.rec_name,
@@ -187,7 +188,7 @@ class WorkingShift(metaclass=PoolMeta):
     def check_cancellable(self):
         if self.contract.invoicing_method == 'working_shift':
             if self.customer_invoice_line:
-                raise UserError(gettext(
+                raise ValidationError(gettext(
                     'working_shift_contract.invoiced_working_shift',
                     ws=self.rec_name))
         elif self.contract.invoicing_method == 'intervention':
@@ -195,7 +196,7 @@ class WorkingShift(metaclass=PoolMeta):
                 if intervention.customer_invoice_line:
                     module = 'working_shift_contract'
                     msg_id = 'invoiced_working_shift_interventions'
-                    raise UserError(gettext(
+                    raise ValidationError(gettext(
                         '{}.{}'.format(module, msg_id),
                         ws=self.rec_name))
 
@@ -442,7 +443,7 @@ class Intervention(metaclass=PoolMeta):
                 if not getattr(intervention, field.name, None):
                     module = 'working_shift_contract'
                     msg_id = 'missing_required_field_contract'
-                    raise UserError(gettext(
+                    raise ValidationError(gettext(
                             '{}.{}'.format(module, msg_id),
                             intervention=intervention.rec_name,
                             field=field.field_description))
