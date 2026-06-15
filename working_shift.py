@@ -446,7 +446,7 @@ class Intervention(metaclass=PoolMeta):
                     raise ValidationError(gettext(
                             '{}.{}'.format(module, msg_id),
                             intervention=intervention.rec_name,
-                            field=field.field_description))
+                            field=field.string))
 
     @classmethod
     def create_customer_invoice_line(cls, interventions, party):
