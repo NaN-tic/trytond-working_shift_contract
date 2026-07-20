@@ -1,6 +1,6 @@
 # The COPYRIGHT file at the top level of this repository contains the full
 # copyright notices and license terms.
-from trytond.config import config
+import trytond.config as config
 from trytond.model import ModelSQL, ModelView, MatchMixin, Unique, fields
 from trytond.pyson import Eval, Id, If, Bool
 from trytond.pool import PoolMeta
