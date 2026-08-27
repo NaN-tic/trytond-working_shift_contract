@@ -9,13 +9,14 @@
    xmlns="http://www.w3.org/2000/svg"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="105mm"
-   height="105mm"
-   viewBox="0 0 105 105"
+   width="24"
+   height="24"
+   viewBox="0 0 24 24"
    version="1.1"
    id="svg4501"
    inkscape:version="0.92.1 r15371"
    sodipodi:docname="green.svg">
+  <g data-icon-normalized="1" transform="scale(0.2285714286)">
   <defs
      id="defs4495" />
   <sodipodi:namedview
@@ -60,5 +61,7 @@
        cx="52.463093"
        cy="244.31012"
        r="52.160713" />
+  </g>
+
   </g>
 </svg>
