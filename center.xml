@@ -6,10 +6,6 @@
         <record model="res.group" id="group_center_admin">
             <field name="name">Centers Administration</field>
         </record>
-        <record model="res.user-res.group" id="user_admin_group_center_admin">
-            <field name="user" ref="res.user_admin"/>
-            <field name="group" ref="group_center_admin"/>
-        </record>
         <!-- center -->
         <record model="ir.ui.view" id="center_view_list">
             <field name="model">working_shift.center</field>

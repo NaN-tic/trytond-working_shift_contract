@@ -6,10 +6,6 @@
         <record model="res.group" id="group_working_shift_contract">
             <field name="name">Working Shifts Contracts</field>
         </record>
-        <record model="res.user-res.group" id="user_admin_group_working_shift_contract">
-            <field name="user" ref="res.user_admin"/>
-            <field name="group" ref="group_working_shift_contract"/>
-        </record>
 
         <!-- working_shift.contract -->
         <record model="ir.ui.view" id="contract_view_form">
