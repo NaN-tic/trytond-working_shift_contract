@@ -26,7 +26,7 @@ class Contract(ModelSQL, ModelView):
                 ()),
             ],
         states={
-            'readonly': Eval('invoicing_method') == 'intervention',
+            'editable': Eval('invoicing_method') != 'intervention',
             },
         help='A Working Shift in a contract which requires interventions will '
         'show the user a warning if he closes it without creating any '

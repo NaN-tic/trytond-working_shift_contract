@@ -24,10 +24,10 @@ class WorkingShift(metaclass=PoolMeta):
             'Requires Interventions'),
         'on_change_with_requires_interventions')
     customer_invoice_line = fields.Many2One('account.invoice.line',
-        'Customer Invoice Line', readonly=True)
+        'Customer Invoice Line', states={'editable': False})
     customer_contract_rule = fields.Many2One(
         'working_shift.contract.working_shift_rule',
-        'Customer Contract Rule', readonly=True)
+        'Customer Contract Rule', states={'editable': False})
     date = fields.Date('Date', required=True)
     estimated_start = fields.DateTime('Estimated Start', required=True,
         states=STATES)
@@ -60,23 +60,12 @@ class WorkingShift(metaclass=PoolMeta):
             cls.interventions.states['required'] = interventions_states_clause
         cls.interventions.depends.add('contract')
 
-        if cls.start.states:
-            if cls.start.states.get('readonly'):
-                cls.start.states['readonly'] |= Bool(Eval('end'))
+        for field in (cls.start, cls.end):
+            editable = ~Bool(Eval('end'))
+            if 'editable' in field.states:
+                field.states['editable'] &= editable
             else:
-                cls.start.states['readonly'] = Bool(Eval('end'))
-        else:
-            cls.start.states = {}
-            cls.start.states['readonly'] = Bool(Eval('end'))
-
-        if cls.end.states:
-            if cls.end.states.get('readonly'):
-                cls.end.states['readonly'] |= Bool(Eval('end'))
-            else:
-                cls.end.states['readonly'] = Bool(Eval('end'))
-        else:
-            cls.end.states = {}
-            cls.end.states['readonly'] = Bool(Eval('end'))
+                field.states['editable'] = editable
 
     @classmethod
     def validate(cls, records):
@@ -174,6 +163,7 @@ class WorkingShift(metaclass=PoolMeta):
         return self.contract.requires_interventions if self.contract else False
 
     @classmethod
+    @ModelView.button
     def cancel(cls, working_shifts):
         for working_shift in working_shifts:
             working_shift.check_cancellable()
@@ -380,10 +370,10 @@ class Intervention(metaclass=PoolMeta):
             'Invoicing Method'),
         'on_change_with_invoicing_method', searcher='search_invoicing_method')
     customer_invoice_line = fields.Many2One('account.invoice.line',
-        'Invoice Line', readonly=True)
+        'Invoice Line', states={'editable': False})
     customer_contract_rule = fields.Many2One(
         'working_shift.contract.intervention_rule',
-        'Customer Contract Rule', readonly=True)
+        'Customer Contract Rule', states={'editable': False})
 
     @classmethod
     def __register__(cls, module_name):
