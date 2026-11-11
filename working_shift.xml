@@ -73,4 +73,10 @@
             <field name="group" ref="account.group_account"/>
         </record>
     </data>
+    <data>
+        <record model="ir.action-res.group" id="invoice_customers_group_account">
+            <field name="action" ref="act_invoice_customers"/>
+            <field name="group" ref="account.group_account"/>
+        </record>
+    </data>
 </tryton>
